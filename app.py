@@ -16,11 +16,12 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 
 # variables
-url = 'http://'+config['master']['hostname']+'/post'
+master_base_url = 'http://'+config['master']['hostname']+':'+config['master']['port']
+url = master_base_url+'/post'
 mod_id = config['module']['id']
 ip_master = config['udp']['ip_master']
 udp_port = int(config['udp']['port'])
-print('Server Url : '+url)
+print('Server Url : '+master_base_url)
 
 def sendimages():
     # fichiers images
