@@ -25,6 +25,8 @@ master_base_url = 'http://'+config['master']['hostname']+':'+config['master']['p
 url = master_base_url+'/post'
 mod_id = config['module']['id']
 udp_port = int(config['udp']['port'])
+
+print('Slave module id',mod_id)
 print('Server Url : '+master_base_url)
 
 def updatemasterdata(h,p):
