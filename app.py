@@ -51,14 +51,13 @@ def sendimages(id):
     filename0 = id+'-0.jpg'
     filename1 = id+'-1.jpg'
     if not simulation :
-        src0 = filename0,
+        src0 = filename0
         src1 = filename1
     else :
         src0 = 'test-a.jpg'
         src1 = 'test-b.jpg'
 
     print("open ",src0,"and",src1)
-    time.sleep(3)
     files = [
         ('a', (filename0,open(src0, 'rb'), 'image/jpg')),
         ('b', (filename1,open(src1, 'rb'), 'image/jpg'))
