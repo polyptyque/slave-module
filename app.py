@@ -48,8 +48,8 @@ if not simulation :
 def sendimages(id):
     # fichiers images
 
-    filename0 = id+'0.jpg'
-    filename1 = id+'1.jpg'
+    filename0 = id+'-0.jpg'
+    filename1 = id+'-1.jpg'
     if not simulation :
         src0 = filename0,
         src1 = filename1
@@ -57,6 +57,7 @@ def sendimages(id):
         src0 = 'test-a.jpg'
         src1 = 'test-b.jpg'
 
+    print("open ",src0,"and",src1)
     files = [
         ('a', (filename0,open(src0, 'rb'), 'image/jpg')),
         ('b', (filename1,open(src1, 'rb'), 'image/jpg'))
@@ -89,8 +90,8 @@ def takeimages(id):
         #savejpegstream(0,stream0);
         #savejpegstream(1,stream1);
 
-        camera0.capture(id+'0.jpg', format='jpeg')
-        camera1.capture(id+'1.jpg', format='jpeg')
+        camera0.capture(id+'-0.jpg', format='jpeg')
+        camera1.capture(id+'-1.jpg', format='jpeg')
 
         b = time.clock()
         print('image shot in '+str(round((b-a)*1000))+'ms ')
