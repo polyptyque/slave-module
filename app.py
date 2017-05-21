@@ -33,14 +33,21 @@ print('Run mode : ', runmode)
 print('Server Url : ' + master_base_url)
 
 
+def save_config() :
+    global config
+    config_file = open("config.ini", "w")
+    config.write(config_file)
+    print("config saved")
+
+
 def update_master_configuration(options):
     global config, master_hostname, master_base_url
     if options['hostname'] is not None:
         master_hostname = options['hostname']
         config['master']['hostname'] = master_hostname
     master_base_url = 'http://' + master_hostname + ':' + master_port
-    config.write('config.ini')
     print("master hostname updated to " + master_base_url)
+    save_config()
 
 
 def updatemasterdata(h, p):
@@ -125,11 +132,10 @@ while True:
     print("received message:" + str(type(data)))
     message = json.loads(data.decode('utf-8'))
     print(addr)
-    action = message['action']
-    if action == 'shot':
+    if message['action'] == 'shot':
         print("shot", message['id'])
         takeimages(message['id'])
-    elif action == 'update_master_configuration':
+    elif message['action'] == 'update_master_configuration':
         update_master_configuration(message)
     else:
         print("action inconnue")
