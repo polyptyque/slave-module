@@ -41,20 +41,14 @@ def save_config() :
 
 
 def update_master_configuration(options):
-    global config, master_hostname, master_base_url
+    global config, master_hostname, master_base_url, url
     if options['hostname'] is not None:
         master_hostname = options['hostname']
         config['master']['hostname'] = master_hostname
     master_base_url = 'http://' + master_hostname + ':' + master_port
+    url = master_base_url + '/post'
     print("master hostname updated to " + master_base_url)
     save_config()
-
-
-def updatemasterdata(h, p):
-    global master_hostname
-    # update datas from master UDP configuration
-    master_base_url = 'http://' + h + ':' + p
-    url = master_base_url + '/post'
 
 
 if not simulation:
