@@ -63,6 +63,7 @@ if not simulation:
 
 
 def sendimages(id):
+    global url
     # fichiers images
 
     filename0 = id + '-0.jpg'
