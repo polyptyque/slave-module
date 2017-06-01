@@ -1,4 +1,7 @@
 #!/usr/bin/python3
+print("------ POLYPTYQUE ------")
+print("slave-module démarre ...")
+print("")
 import os.path
 import shutil
 import configparser
@@ -7,6 +10,11 @@ import requests
 import time
 import io
 import json
+
+rootPath = os.path.dirname(os.path.abspath(__file__))
+#os.path.dirname(rootpath)
+print("setting up root path :", rootPath)
+os.chdir(rootPath)
 
 # duplique le fichier de configuration par défaut
 # si le fichier de configuration n'existe pas
