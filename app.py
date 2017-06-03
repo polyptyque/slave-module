@@ -1,7 +1,6 @@
 #!/usr/bin/python3
-print("------ POLYPTYQUE ------")
-print("slave-module démarre ...")
-print("")
+print("\n------ POLYPTYQUE ------")
+print("slave-module démarre ...\n")
 import os.path
 import shutil
 import configparser
@@ -36,13 +35,20 @@ master_base_url = 'http://' + master_hostname + ':' + master_port
 url = master_base_url + '/post'
 mod_id = config['module']['id']
 udp_port = int(config['udp']['port'])
+cam_count = config['camera']['count']
+cam_width = config['camera']['width']
+cam_height = config['camera']['height']
+cam_preview = config['camera']['preview'] == 1
+cam_0_rotation = config['camera']['rotation_0']
+cam_1_rotation = config['camera']['rotation_1']
 
 print('Slave module id : ', mod_id)
 print('Run mode : ', runmode)
+print('Cam count : ', cam_count)
 print('Server Url : ' + master_base_url)
 
 
-def save_config() :
+def save_config():
     global config
     config_file = open("config.ini", "w")
     config.write(config_file)
@@ -60,15 +66,70 @@ def update_master_configuration(options):
     save_config()
 
 
+def init_camera_options(rotation):
+
+    # Resolution
+    resolution = picamera.PiResolution(cam_width, cam_height)
+
+    # Start the camera
+    camera = picamera.PiCamera(0, 'none', False, resolution, 1)
+
+    # Rotation
+    camera.rotation = rotation
+
+    # Exposure
+    camera.exposure_mode = 'off'
+
+    # Automatic White balance
+    camera.awb_mode = 'off'
+    camera.awb_gains = 'off'
+
+    # Camera resolution
+    camera.resolution = '1080p'
+
+    # Led off
+    camera.led = 0
+
+    # Update camera options
+    update_camera_options(camera)
+
+    return camera
+
+
+def update_camera_options(camera):
+
+    # Iso
+    camera.iso = 800
+
+    # Brightness
+    camera.brightness = 50
+
+    # Contrast
+    camera.contrast = 0
+
+    # Saturation
+    camera.saturation = 0
+
+    # Sharpness
+    camera.sharpness = 0
+
+    # shutter_speed
+    # camera.shutter_speed
+
+
 if not simulation:
     import picamera
 
-    # declare la camera
-    camera0 = picamera.PiCamera(0)
-    camera1 = picamera.PiCamera(1)
-    # lance la camera
-    # camera0.start_preview()
-    # camera1.start_preview()
+    # initialise la camera 0
+    camera0 = init_camera_options(cam_0_rotation)
+
+    # initialise la camera 1
+    if cam_count > 1:
+        camera1 = init_camera_options(cam_1_rotation)
+
+    # lance la preview camera
+    if cam_preview:
+        camera0.start_preview()
 
 
 def sendimages(id):
