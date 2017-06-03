@@ -66,32 +66,32 @@ def update_master_configuration(options):
     save_config()
 
 
-def init_camera_options(rotation):
+def init_camera_options(id, rotation):
 
     # Resolution
     resolution = picamera.PiResolution(cam_width, cam_height)
 
     # Start the camera
-    camera = picamera.PiCamera(0, 'none', False, resolution, 1)
+    camera = picamera.PiCamera(id, 'none', False, resolution, 1)
 
     # Rotation
-    camera.rotation = rotation
+    #camera.rotation = rotation
 
     # Exposure
-    camera.exposure_mode = 'off'
+    #camera.exposure_mode = 'off'
 
     # Automatic White balance
-    camera.awb_mode = 'off'
-    camera.awb_gains = 'off'
+    #camera.awb_mode = 'off'
+    #camera.awb_gains = 'off'
 
     # Camera resolution
-    camera.resolution = '1080p'
+    #camera.resolution = '1080p'
 
     # Led off
     camera.led = 0
 
     # Update camera options
-    update_camera_options(camera)
+    #update_camera_options(camera)
 
     return camera
 
@@ -121,11 +121,11 @@ if not simulation:
     import picamera
 
     # initialise la camera 0
-    camera0 = init_camera_options(cam_0_rotation)
+    camera0 = init_camera_options(0, cam_0_rotation)
 
     # initialise la camera 1
     if cam_count > 1:
-        camera1 = init_camera_options(cam_1_rotation)
+        camera1 = init_camera_options(1, cam_1_rotation)
 
     # lance la preview camera
     if cam_preview:
