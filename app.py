@@ -82,7 +82,8 @@ def update_master_configuration(options):
 #
 
 
-def init_camera_options(id, rotation):
+def init_camera_options(rotation):
+    global config
 
     # Resolution
     resolution = picamera.PiResolution(cam_width, cam_height)
@@ -110,7 +111,7 @@ def init_camera_options(id, rotation):
     # Horizontal flip
     camera.hflip = True
 
-    print(config.get('camera'));
+    print(config['camera']);
 
     # Update camera options
     update_camera_options(camera)
