@@ -133,6 +133,9 @@ def update_camera_options(camera):
     # Iso
     camera.shutter_speed = int(config.get('camera', 'shutter_speed'))
 
+    # Exposure compensation
+    camera.exposure_compensation = int(config.get('camera', 'exposure_compensation'))
+
     # Brightness
     camera.brightness = int(config.get('camera', 'brightness'))
 
