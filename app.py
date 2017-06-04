@@ -94,7 +94,7 @@ def init_camera_options(cam_id, rotation):
     camera.rotation = rotation
 
     # Exposure
-    # camera.exposure_mode = 'off'
+    camera.exposure_mode = 'off'
 
     # Automatic White balance
     # camera.awb_mode = 'off'
@@ -190,8 +190,6 @@ def set_camera_options(options):
 
 if not simulation:
     import picamera
-
-    print(config['camera']);
 
     # initialise la camera 0
     camera0 = init_camera_options(0, cam_0_rotation)
