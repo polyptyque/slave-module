@@ -104,6 +104,10 @@ def init_camera_options(id, rotation):
 
 def update_camera_options(camera):
 
+    # si la caméra n'existe pas, on n'essaie même pas
+    if camera is None:
+        return
+
     # Iso
     camera.iso = 400
 
@@ -143,9 +147,14 @@ def get_camera_options():
 def set_camera_options(options):
     global config
 
-    print('options', options)
+    print('Update Camera options to ')
     for key, value in options:
         print(key, value)
+        config.set('camera', key, value)
+
+    update_camera_options(camera0)
+    update_camera_options(camera1)
+    save_config()
 
 if not simulation:
     import picamera
