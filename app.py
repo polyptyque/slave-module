@@ -121,18 +121,21 @@ def update_camera_options(camera):
 
 
 def get_camera_options():
-    global mod_id
+    global config, mod_id
     # envoie au master les options de configuration camera
 
     # headers
     headers = {
-        'x-from': 'cm'+mod_id,
+        'content-type': 'application/json',
+	'x-from': 'cm'+mod_id,
         'x-action': 'get_camera_options'
     }
 
-    print('get_camera_options post');
-    r = requests.post(config_url, json=config['camera'], headers=headers)
+    camera_options = json.loads(json.dumps(dict(config.items('camera'))))
+    print('get_camera_options post',camera_options)
+    r = requests.post(config_url, json=camera_options, headers=headers)
     print(r.text)
+	
 
 if not simulation:
     import picamera
