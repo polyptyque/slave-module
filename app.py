@@ -110,6 +110,8 @@ def init_camera_options(id, rotation):
     # Horizontal flip
     camera.hflip = True
 
+    print(config.get('camera'));
+
     # Update camera options
     update_camera_options(camera)
 
