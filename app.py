@@ -128,19 +128,19 @@ def update_camera_options(camera):
         return
 
     # Iso
-    camera.iso = 400
+    camera.iso = int(config.get('camera', 'iso'))
 
     # Brightness
-    camera.brightness = 50
+    camera.brightness = int(config.get('camera', 'brightness'))
 
     # Contrast
-    camera.contrast = 0
+    camera.contrast = int(config.get('camera', 'contrast'))
 
     # Saturation
-    camera.saturation = 0
+    camera.saturation = int(config.get('camera', 'saturation'))
 
     # Sharpness
-    camera.sharpness = 0
+    camera.sharpness = int(config.get('camera', 'sharpness'))
 
     # shutter_speed
     # camera.shutter_speed
@@ -163,8 +163,7 @@ def get_camera_options():
 
     camera_options = json.loads(json.dumps(dict(config.items('camera'))))
     print('get_camera_options post',camera_options)
-    r = requests.post(config_url, json=camera_options, headers=headers)
-    print(r.text)
+    requests.post(config_url, json=camera_options, headers=headers)
 
 #
 # SET CAMERA OPTIONS
