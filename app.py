@@ -97,9 +97,7 @@ def init_camera_options(cam_id, rotation):
     camera.exposure_mode = 'off'
 
     # Automatic White balance
-    # camera.awb_mode = 'off'
-    # print(camera.awb_gains)
-    # camera.awb_gains = (0.9,2.9)
+    camera.awb_mode = 'off'
 
     # Camera resolution
     camera.resolution = '1080x1920'
@@ -147,6 +145,9 @@ def update_camera_options(camera):
 
     # Sharpness
     camera.sharpness = int(config.get('camera', 'sharpness'))
+
+    # AWB
+    camera.awb_gains = (int(config.get('camera', 'awb_gain_red')), int(config.get('camera', 'awb_gain_red')))
 
     # shutter_speed
     # camera.shutter_speed
