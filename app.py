@@ -35,12 +35,12 @@ master_base_url = 'http://' + master_hostname + ':' + master_port
 url = master_base_url + '/post'
 mod_id = config['module']['id']
 udp_port = int(config['udp']['port'])
-cam_count = config['camera']['count']
-cam_width = config['camera']['width']
-cam_height = config['camera']['height']
-cam_preview = config['camera']['preview'] == 1
-cam_0_rotation = config['camera']['rotation_0']
-cam_1_rotation = config['camera']['rotation_1']
+cam_count = int(config['camera']['count'])
+cam_width = int(config['camera']['width'])
+cam_height = int(config['camera']['height'])
+cam_preview = config['camera']['preview'] == 'yes'
+cam_0_rotation = int(config['camera']['rotation_0'])
+cam_1_rotation = int(config['camera']['rotation_1'])
 
 print('Slave module id : ', mod_id)
 print('Run mode : ', runmode)
@@ -72,26 +72,27 @@ def init_camera_options(id, rotation):
     resolution = picamera.PiResolution(cam_width, cam_height)
 
     # Start the camera
-    camera = picamera.PiCamera(id, 'none', False, resolution, 1)
+    camera = picamera.PiCamera(id)#, 'none', False, resolution, 1)
 
     # Rotation
-    #camera.rotation = rotation
+    camera.rotation = rotation
 
     # Exposure
     #camera.exposure_mode = 'off'
 
     # Automatic White balance
     #camera.awb_mode = 'off'
-    #camera.awb_gains = 'off'
+    #print(camera.awb_gains)
+    #camera.awb_gains = (0.9,2.9)
 
     # Camera resolution
-    #camera.resolution = '1080p'
+    camera.resolution = '1080x1920'
 
     # Led off
     camera.led = 0
 
     # Update camera options
-    #update_camera_options(camera)
+    update_camera_options(camera)
 
     return camera
 
@@ -99,7 +100,7 @@ def init_camera_options(id, rotation):
 def update_camera_options(camera):
 
     # Iso
-    camera.iso = 800
+    camera.iso = 400
 
     # Brightness
     camera.brightness = 50
@@ -129,6 +130,7 @@ if not simulation:
 
     # lance la preview camera
     if cam_preview:
+        print("Start camera preview")
         camera0.start_preview()
 
 
