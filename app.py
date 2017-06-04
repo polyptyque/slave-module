@@ -26,6 +26,10 @@ if not os.path.isfile('config.ini'):
 config = configparser.ConfigParser()
 config.read('config.ini')
 
+# camera
+camera0 = None
+camera1 = None
+
 # variables par défaut
 runmode = config['app']['runmode']
 simulation = runmode == "simulation"
