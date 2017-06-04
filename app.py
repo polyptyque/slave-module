@@ -137,6 +137,12 @@ def get_camera_options():
     print(r.text)
 	
 
+
+def set_camera_options(options):
+    global config
+
+    print('options', options)
+
 if not simulation:
     import picamera
 
@@ -226,5 +232,7 @@ while True:
         update_master_configuration(message)
     elif message['action'] == 'get_camera_options':
         get_camera_options()
+    elif message['action'] == 'set_camera_options':
+        set_camera_options(message['options'])
     else:
         print("action inconnue")
