@@ -121,15 +121,12 @@ def update_camera_options(camera):
 
 
 def get_camera_options():
-
+    global mod_id
     # envoie au master les options de configuration camera
 
     # headers
     headers = {
-        'x-run-mod': runmode,
-        'x-mod-id': mod_id,
-        'x-cam-count': cam_count,
-        'x-shot-id': id,
+        'x-from': 'cm'+mod_id,
         'x-action': 'get_camera_options'
     }
 
