@@ -32,7 +32,8 @@ simulation = runmode == "simulation"
 master_hostname = config['master']['hostname']
 master_port = config['master']['port']
 master_base_url = 'http://' + master_hostname + ':' + master_port
-url = master_base_url + '/post'
+post_url = master_base_url + '/post'
+config_url = master_base_url + '/config'
 mod_id = config['module']['id']
 udp_port = int(config['udp']['port'])
 cam_count = int(config['camera']['count'])
@@ -56,12 +57,13 @@ def save_config():
 
 
 def update_master_configuration(options):
-    global config, master_hostname, master_base_url, url
+    global config, master_hostname, master_base_url, post_url, config_url
     if options['hostname'] is not None:
         master_hostname = options['hostname']
         config['master']['hostname'] = master_hostname
     master_base_url = 'http://' + master_hostname + ':' + master_port
-    url = master_base_url + '/post'
+    post_url = master_base_url + '/post'
+    config_url = master_base_url + '/config'
     print("master hostname updated to " + master_base_url)
     save_config()
 
@@ -118,6 +120,23 @@ def update_camera_options(camera):
     # camera.shutter_speed
 
 
+def get_camera_options():
+
+    # envoie au master les options de configuration camera
+
+    # headers
+    headers = {
+        'x-run-mod': runmode,
+        'x-mod-id': mod_id,
+        'x-cam-count': cam_count,
+        'x-shot-id': id,
+        'x-action': 'get_camera_options'
+    }
+
+    print('get_camera_options post');
+    r = requests.post(config_url, json=config['camera'], headers=headers)
+    print(r.text)
+
 if not simulation:
     import picamera
 
@@ -135,7 +154,7 @@ if not simulation:
 
 
 def sendimages(id):
-    global url
+    global post_url
     # fichiers images
 
     filename0 = id + '-0.jpg'
@@ -156,10 +175,11 @@ def sendimages(id):
     headers = {
         'x-run-mod': runmode,
         'x-mod-id': mod_id,
+        'x-cam-count': cam_count,
         'x-shot-id': id
     }
 
-    r = requests.post(url, files=files, headers=headers)
+    r = requests.post(post_url, files=files, headers=headers)
     print(r.text)
 
 
@@ -204,5 +224,7 @@ while True:
         takeimages(message['id'])
     elif message['action'] == 'update_master_configuration':
         update_master_configuration(message)
+    elif message['action'] == 'get_camera_options':
+        get_camera_options()
     else:
         print("action inconnue")
