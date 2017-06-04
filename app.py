@@ -111,7 +111,7 @@ def init_camera_options(rotation):
     # Horizontal flip
     camera.hflip = True
 
-    print(config['camera']);
+    print(config['camera'])
 
     # Update camera options
     update_camera_options(camera)
@@ -195,11 +195,11 @@ if not simulation:
     import picamera
 
     # initialise la camera 0
-    camera0 = init_camera_options(0, cam_0_rotation)
+    camera0 = init_camera_options(cam_0_rotation)
 
     # initialise la camera 1
     if cam_count > 1:
-        camera1 = init_camera_options(1, cam_1_rotation)
+        camera1 = init_camera_options(cam_1_rotation)
 
     # lance la preview camera
     if cam_preview:
