@@ -74,24 +74,27 @@ def init_camera_options(id, rotation):
     resolution = picamera.PiResolution(cam_width, cam_height)
 
     # Start the camera
-    camera = picamera.PiCamera(id)#, 'none', False, resolution, 1)
+    camera = picamera.PiCamera(id)
 
     # Rotation
     camera.rotation = rotation
 
     # Exposure
-    #camera.exposure_mode = 'off'
+    # camera.exposure_mode = 'off'
 
     # Automatic White balance
-    #camera.awb_mode = 'off'
-    #print(camera.awb_gains)
-    #camera.awb_gains = (0.9,2.9)
+    # camera.awb_mode = 'off'
+    # print(camera.awb_gains)
+    # camera.awb_gains = (0.9,2.9)
 
     # Camera resolution
     camera.resolution = '1080x1920'
 
     # Led off
     camera.led = 0
+
+    # Horizontal flip
+    camera.hflip = True
 
     # Update camera options
     update_camera_options(camera)
@@ -127,7 +130,7 @@ def get_camera_options():
     # headers
     headers = {
         'content-type': 'application/json',
-	'x-from': 'cm'+mod_id,
+        'x-from': 'cm'+mod_id,
         'x-action': 'get_camera_options'
     }
 
@@ -135,13 +138,14 @@ def get_camera_options():
     print('get_camera_options post',camera_options)
     r = requests.post(config_url, json=camera_options, headers=headers)
     print(r.text)
-	
 
 
 def set_camera_options(options):
     global config
 
     print('options', options)
+    for key, value in options:
+        print(key, value)
 
 if not simulation:
     import picamera
