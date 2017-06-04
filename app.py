@@ -148,7 +148,7 @@ def set_camera_options(options):
     global config
 
     print('Update Camera options to ')
-    for key, value in options:
+    for key, value in options.items():
         print(key, value)
         config.set('camera', key, value)
 
