@@ -147,7 +147,7 @@ def update_camera_options(camera):
     camera.sharpness = int(config.get('camera', 'sharpness'))
 
     # AWB
-    camera.awb_gains = (int(config.get('camera', 'awb_gain_red')), int(config.get('camera', 'awb_gain_blue')))
+    camera.awb_gains = (float(config.get('camera', 'awb_gain_red')), float(config.get('camera', 'awb_gain_blue')))
 
     # shutter_speed
     # camera.shutter_speed
