@@ -82,14 +82,13 @@ def update_master_configuration(options):
 #
 
 
-def init_camera_options(rotation):
-    global config
+def init_camera_options(cam_id, rotation):
 
     # Resolution
     resolution = picamera.PiResolution(cam_width, cam_height)
 
     # Start the camera
-    camera = picamera.PiCamera(id)
+    camera = picamera.PiCamera(cam_id)
 
     # Rotation
     camera.rotation = rotation
@@ -110,8 +109,6 @@ def init_camera_options(rotation):
 
     # Horizontal flip
     camera.hflip = True
-
-    print(config['camera'])
 
     # Update camera options
     update_camera_options(camera)
@@ -194,12 +191,14 @@ def set_camera_options(options):
 if not simulation:
     import picamera
 
+    print(config['camera']);
+
     # initialise la camera 0
-    camera0 = init_camera_options(cam_0_rotation)
+    camera0 = init_camera_options(0, cam_0_rotation)
 
     # initialise la camera 1
     if cam_count > 1:
-        camera1 = init_camera_options(cam_1_rotation)
+        camera1 = init_camera_options(1, cam_1_rotation)
 
     # lance la preview camera
     if cam_preview:
