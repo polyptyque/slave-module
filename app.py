@@ -56,6 +56,11 @@ def save_config():
     print("config saved")
 
 
+#
+# UPDATE MASTER CONFIGURATION
+#
+
+
 def update_master_configuration(options):
     global config, master_hostname, master_base_url, post_url, config_url
     if options['hostname'] is not None:
@@ -66,6 +71,11 @@ def update_master_configuration(options):
     config_url = master_base_url + '/config'
     print("master hostname updated to " + master_base_url)
     save_config()
+
+
+#
+# INIT CAMERA OPTIONS
+#
 
 
 def init_camera_options(id, rotation):
@@ -102,6 +112,11 @@ def init_camera_options(id, rotation):
     return camera
 
 
+#
+# UPDATE CAMERA OPTIONS
+#
+
+
 def update_camera_options(camera):
 
     # si la caméra n'existe pas, on n'essaie même pas
@@ -126,6 +141,10 @@ def update_camera_options(camera):
     # shutter_speed
     # camera.shutter_speed
 
+#
+# GET CAMERA OPTIONS
+#
+
 
 def get_camera_options():
     global config, mod_id
@@ -143,9 +162,13 @@ def get_camera_options():
     r = requests.post(config_url, json=camera_options, headers=headers)
     print(r.text)
 
+#
+# SET CAMERA OPTIONS
+#
+
 
 def set_camera_options(options):
-    global config
+    global config, camera0, camera1
 
     print('Update Camera options to ')
     for key, value in options.items():
@@ -155,6 +178,12 @@ def set_camera_options(options):
     update_camera_options(camera0)
     update_camera_options(camera1)
     save_config()
+
+
+#
+# Camera startup
+#
+
 
 if not simulation:
     import picamera
@@ -170,6 +199,11 @@ if not simulation:
     if cam_preview:
         print("Start camera preview")
         camera0.start_preview()
+
+
+#
+# SEND IMAGES
+#
 
 
 def sendimages(id):
