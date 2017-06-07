@@ -46,6 +46,7 @@ cam_height = int(config['camera']['height'])
 cam_preview = config['camera']['preview'] == 'yes'
 cam_0_rotation = int(config['camera']['rotation_0'])
 cam_1_rotation = int(config['camera']['rotation_1'])
+cache_path = 'cache/'
 
 print('Slave module id : ', mod_id)
 print('Run mode : ', runmode)
@@ -223,8 +224,8 @@ def sendimages(id):
     filename0 = id + '-0.jpg'
     filename1 = id + '-1.jpg'
     if not simulation:
-        src0 = filename0
-        src1 = filename1
+        src0 = cache_path+filename0
+        src1 = cache_path+filename1
     else:
         src0 = 'test-a.jpg'
         src1 = 'test-b.jpg'
@@ -271,9 +272,9 @@ def takeimages(id):
         # savejpegstream(1,stream1);
 
         if camera0:
-            camera0.capture(id + '-0.jpg', format='jpeg')
+            camera0.capture(cache_path+id + '-0.jpg', format='jpeg')
         if camera1:
-            camera1.capture(id + '-1.jpg', format='jpeg')
+            camera1.capture(cache_path+id + '-1.jpg', format='jpeg')
 
         b = time.clock()
         print('image shot in ' + str(round((b - a) * 1000)) + 'ms ')
