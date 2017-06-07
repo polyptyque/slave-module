@@ -266,6 +266,7 @@ def savejpegstream(uid, cam_id, stream):
     global cache_path
     if stream:
         print("save jpeg stream for camera", cam_id, 'uid', uid)
+        print(time.clock())
         jpeg_path = cache_path+uid+'-'+str(cam_id)+'.jpg'
         print("open", jpeg_path, "...")
         with io.open(jpeg_path, 'wb') as jpeg_file:
@@ -304,11 +305,13 @@ def takeimages(uid):
             camera1.capture(stream1, format='jpeg')
             print('Camera Capture 1', time.clock())
 
-        print('savejpegstream 0', time.clock())
-        savejpegstream(uid, 0, stream0)
-        print('savejpegstream 1', time.clock())
-        savejpegstream(uid, 1, stream1)
+        if camera0:
+            savejpegstream(uid, 0, stream0)
 
+        if camera1:
+            savejpegstream(uid, 1, stream1)
+
+        # static camera shoot in file
         # if camera0:
         #    camera0.capture(cache_path+id + '-0.jpg', format='jpeg')
         # if camera1:
