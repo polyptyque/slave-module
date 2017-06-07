@@ -317,7 +317,7 @@ def takeimages(uid):
         b = time.clock()
         print('image shot in ' + str(round((b - a) * 1000)) + 'ms ')
 
-    sendimages(id)
+    sendimages(uid)
 
 
 # serveur UDP
