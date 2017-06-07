@@ -229,15 +229,16 @@ def sendimages(id):
         src0 = 'test-a.jpg'
         src1 = 'test-b.jpg'
 
-    print("open ", src0, "and", src1)
     if camera1:
         # mode stereo
+        print("open stereo", src0, "and", src1)
         files = [
             ('a', (filename0, open(src0, 'rb'), 'image/jpg')),
             ('b', (filename1, open(src1, 'rb'), 'image/jpg'))
         ]
     else:
         # mode mono
+        print("open mono", src0)
         files = [
             ('a', (filename0, open(src0, 'rb'), 'image/jpg')),
         ]
