@@ -224,12 +224,12 @@ if not simulation:
 #
 
 
-def sendimages(id):
+def sendimages(uid):
     global post_url
     # fichiers images
 
-    filename0 = id + '-0.jpg'
-    filename1 = id + '-1.jpg'
+    filename0 = uid + '-0.jpg'
+    filename1 = uid + '-1.jpg'
     if not simulation:
         src0 = cache_path+filename0
         src1 = cache_path+filename1
@@ -255,7 +255,7 @@ def sendimages(id):
         'x-run-mod': runmode,
         'x-mod-id': mod_id,
         'x-cam-count': cam_count,
-        'x-shot-id': id
+        'x-shot-id': uid
     }
 
     r = requests.post(post_url, files=files, headers=headers)
@@ -269,8 +269,9 @@ def savejpegstream(uid, cam_id, stream):
         jpeg_path = cache_path+uid+'-'+str(cam_id)+'.jpg'
         print("open", jpeg_path, "...")
         with io.open(jpeg_path, 'wb') as jpeg_file:
-            jpeg_file.write(stream)
+            jpeg_file.write(stream.getvalue())
             print("write done.")
+            jpeg_file.close()
         return True
     else:
         return False
