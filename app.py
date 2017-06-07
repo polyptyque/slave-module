@@ -262,8 +262,10 @@ def takeimages(id):
         # savejpegstream(0,stream0);
         # savejpegstream(1,stream1);
 
-        camera0.capture(id + '-0.jpg', format='jpeg')
-        camera1.capture(id + '-1.jpg', format='jpeg')
+        if camera0:
+            camera0.capture(id + '-0.jpg', format='jpeg')
+        if camera1:
+            camera1.capture(id + '-1.jpg', format='jpeg')
 
         b = time.clock()
         print('image shot in ' + str(round((b - a) * 1000)) + 'ms ')
