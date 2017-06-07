@@ -285,16 +285,21 @@ def takeimages(id):
         # print("capture camera 1", time.clock())
         # f1 = camera1.capture_continuous(stream1, format='jpeg', use_video_port=False)
         # print("ok",time.clock());
+        print('takeimages', a)
 
         if camera0:
             stream0 = io.BytesIO()
             camera0.capture(stream0, format='jpeg')
+            print('Camera Capture 0', time.clock())
 
         if camera1:
             stream1 = io.BytesIO()
             camera1.capture(stream1, format='jpeg')
+            print('Camera Capture 1', time.clock())
 
+        print('savejpegstream 0', time.clock())
         savejpegstream(0, stream0)
+        print('savejpegstream 1', time.clock())
         savejpegstream(1, stream1)
 
         # if camera0:
