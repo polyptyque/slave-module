@@ -96,7 +96,7 @@ def init_camera_options(cam_id, rotation):
     resolution = picamera.PiResolution(cam_width, cam_height)
 
     # Start the camera
-    camera = picamera.PiCamera(cam_id)
+    camera = picamera.PiCamera(camera_num=cam_id, resolution=resolution)
 
     # Rotation
     camera.rotation = rotation
@@ -156,6 +156,10 @@ def update_camera_options(camera):
 
     # AWB
     camera.awb_gains = (float(config.get('camera', 'awb_gain_red')), float(config.get('camera', 'awb_gain_blue')))
+
+    print("camera.preview.window", camera.preview.window)
+    print("camera.preview.crop", camera.preview.crop)
+
 
 #
 # GET CAMERA OPTIONS
