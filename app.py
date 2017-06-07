@@ -266,7 +266,7 @@ def savejpegstream(uid, cam_id, stream):
     global cache_path
     if stream:
         print("save jpeg stream for camera", cam_id, 'uid', uid)
-        jpeg_path = cache_path+uid+'-'+cam_id+'.jpg'
+        jpeg_path = cache_path+uid+'-'+str(cam_id)+'.jpg'
         print("open", jpeg_path, "...")
         io.open(jpeg_path, 'wb')
         io.write(stream)
