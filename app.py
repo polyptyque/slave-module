@@ -230,10 +230,17 @@ def sendimages(id):
         src1 = 'test-b.jpg'
 
     print("open ", src0, "and", src1)
-    files = [
-        ('a', (filename0, open(src0, 'rb'), 'image/jpg')),
-        ('b', (filename1, open(src1, 'rb'), 'image/jpg'))
-    ]
+    if camera1:
+        # mode stereo
+        files = [
+            ('a', (filename0, open(src0, 'rb'), 'image/jpg')),
+            ('b', (filename1, open(src1, 'rb'), 'image/jpg'))
+        ]
+    else:
+        # mode mono
+        files = [
+            ('a', (filename0, open(src0, 'rb'), 'image/jpg')),
+        ]
     # headers HTTP applicatif
     headers = {
         'x-run-mod': runmode,
