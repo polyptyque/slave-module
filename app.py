@@ -30,6 +30,13 @@ config.read('config.ini')
 camera0 = None
 camera1 = None
 
+# camera stream
+stream0 = None
+stream1 = None
+
+# est-ce que la prise de vue est "en cours"
+shooting = False
+
 # variables par défaut
 runmode = config['app']['runmode']
 simulation = runmode == "simulation"
@@ -255,12 +262,23 @@ def sendimages(id):
     print(r.text)
 
 
+def savejpegstream(cam_id, stream):
+    if stream:
+        print("save jpeg stream for camera", cam_id)
+        return True
+    else:
+        return False
+
+
 def takeimages(id):
+    global shooting, stream0, stream1
+
+    # Oui, les cameras font des prises de vues !
+    shooting = True
+
     if not simulation:
-        t = time.strftime('%Y-%m-%d_%H-%M-%S')
+        # t = time.strftime('%Y-%m-%d_%H-%M-%S')
         a = time.clock()
-        stream0 = io.BytesIO()
-        stream1 = io.BytesIO()
 
         # print("capture camera 0", time.clock())
         # f0 = camera0.capture_continuous(stream0, format='jpeg', use_video_port=False)
@@ -268,13 +286,21 @@ def takeimages(id):
         # f1 = camera1.capture_continuous(stream1, format='jpeg', use_video_port=False)
         # print("ok",time.clock());
 
-        # savejpegstream(0,stream0);
-        # savejpegstream(1,stream1);
-
         if camera0:
-            camera0.capture(cache_path+id + '-0.jpg', format='jpeg')
+            stream0 = io.BytesIO()
+            camera0.capture(stream0, format='jpeg')
+
         if camera1:
-            camera1.capture(cache_path+id + '-1.jpg', format='jpeg')
+            stream1 = io.BytesIO()
+            camera1.capture(stream1, format='jpeg')
+
+        savejpegstream(0, stream0)
+        savejpegstream(1, stream1)
+
+        # if camera0:
+        #    camera0.capture(cache_path+id + '-0.jpg', format='jpeg')
+        # if camera1:
+        #    camera1.capture(cache_path+id + '-1.jpg', format='jpeg')
 
         b = time.clock()
         print('image shot in ' + str(round((b - a) * 1000)) + 'ms ')
