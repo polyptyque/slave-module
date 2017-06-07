@@ -136,7 +136,7 @@ def update_camera_options(camera):
     # Iso
     camera.iso = int(config.get('camera', 'iso'))
 
-    # Iso
+    # Shutter speed
     camera.shutter_speed = int(config.get('camera', 'shutter_speed'))
 
     # Exposure compensation
@@ -156,9 +156,6 @@ def update_camera_options(camera):
 
     # AWB
     camera.awb_gains = (float(config.get('camera', 'awb_gain_red')), float(config.get('camera', 'awb_gain_blue')))
-
-    # shutter_speed
-    # camera.shutter_speed
 
 #
 # GET CAMERA OPTIONS
