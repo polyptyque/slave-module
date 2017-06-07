@@ -157,8 +157,9 @@ def update_camera_options(camera):
     # AWB
     camera.awb_gains = (float(config.get('camera', 'awb_gain_red')), float(config.get('camera', 'awb_gain_blue')))
 
-    print("camera.preview.window", camera.preview.window)
-    print("camera.preview.crop", camera.preview.crop)
+    if camera.preview:
+        print("camera.preview.window", camera.preview.window)
+        print("camera.preview.crop", camera.preview.crop)
 
 
 #
