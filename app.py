@@ -108,7 +108,7 @@ def init_camera_options(cam_id, rotation):
     camera.awb_mode = 'off'
 
     # Camera resolution
-    camera.resolution = '1080x1920'
+    camera.resolution = str(cam_height)+'x'+str(cam_width)
 
     # Led off
     camera.led = 0
