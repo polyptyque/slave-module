@@ -262,15 +262,21 @@ def sendimages(id):
     print(r.text)
 
 
-def savejpegstream(cam_id, stream):
+def savejpegstream(uid, cam_id, stream):
+    global cache_path
     if stream:
-        print("save jpeg stream for camera", cam_id)
+        print("save jpeg stream for camera", cam_id, 'uid', uid)
+        jpeg_path = cache_path+uid+'-'+cam_id+'.jpg'
+        print("open", jpeg_path, "...")
+        io.open(jpeg_path, 'wb')
+        io.write(stream)
+        print("write done.")
         return True
     else:
         return False
 
 
-def takeimages(id):
+def takeimages(uid):
     global shooting, stream0, stream1
 
     # Oui, les cameras font des prises de vues !
@@ -298,9 +304,9 @@ def takeimages(id):
             print('Camera Capture 1', time.clock())
 
         print('savejpegstream 0', time.clock())
-        savejpegstream(0, stream0)
+        savejpegstream(uid, 0, stream0)
         print('savejpegstream 1', time.clock())
-        savejpegstream(1, stream1)
+        savejpegstream(uid, 1, stream1)
 
         # if camera0:
         #    camera0.capture(cache_path+id + '-0.jpg', format='jpeg')
