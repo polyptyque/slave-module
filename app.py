@@ -268,9 +268,9 @@ def savejpegstream(uid, cam_id, stream):
         print("save jpeg stream for camera", cam_id, 'uid', uid)
         jpeg_path = cache_path+uid+'-'+str(cam_id)+'.jpg'
         print("open", jpeg_path, "...")
-        io.open(jpeg_path, 'wb')
-        io.write(stream)
-        print("write done.")
+        with io.open(jpeg_path, 'wb') as jpeg_file:
+            jpeg_file.write(stream)
+            print("write done.")
         return True
     else:
         return False
