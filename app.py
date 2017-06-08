@@ -218,18 +218,21 @@ def startcamera():
             if camera0:
                 print("Stop Preview")
                 camera0.stop_preview()
-                time.sleep(1)
+                time.sleep(5)
+
+        print("Camera 0 start")
 
         # initialise la camera 0
         camera0 = init_camera_options(0, cam_0_rotation)
 
         # initialise la camera 1
         if cam_count > 1:
+            print("Camera 1 start")
             camera1 = init_camera_options(1, cam_1_rotation)
 
         # lance la preview camera
         if cam_preview:
-            print("Start camera preview")
+            print("Start camera 0 preview")
             camera0.start_preview()
 
 
