@@ -319,12 +319,12 @@ def takeimages(uid):
 
         if camera0:
             stream0 = io.BytesIO()
-            camera0.capture(stream0, format='jpeg')
+            camera0.capture(stream0, format='jpeg', quality=70)
             print('Camera Capture 0', time.clock())
 
         if camera1:
             stream1 = io.BytesIO()
-            camera1.capture(stream1, format='jpeg')
+            camera1.capture(stream1, format='jpeg', quality=70)
             print('Camera Capture 1', time.clock())
 
         if camera0:
