@@ -53,6 +53,7 @@ cam_height = int(config['camera']['height'])
 cam_preview = config['camera']['preview'] == 'yes'
 cam_0_rotation = int(config['camera']['rotation_0'])
 cam_1_rotation = int(config['camera']['rotation_1'])
+jpeg_quality = int(config['camera']['jpeg_quality'])
 cache_path = 'cache/'
 
 print('Slave module id : ', mod_id)
@@ -190,12 +191,15 @@ def get_camera_options():
 
 
 def set_camera_options(options):
-    global config, camera0, camera1
+    global config, camera0, camera1, jpeg_quality
 
     print('Update Camera options to ')
     for key, value in options.items():
         print("\t"+key+" : "+value)
         config.set('camera', key, value)
+
+    print('Jpeg quality', jpeg_quality)
+    jpeg_quality = int(config.get('camera', 'jpeg_quality'))
 
     update_camera_options(camera0)
     update_camera_options(camera1)
@@ -319,12 +323,12 @@ def takeimages(uid):
 
         if camera0:
             stream0 = io.BytesIO()
-            camera0.capture(stream0, format='jpeg', quality=70)
+            camera0.capture(stream0, format='jpeg', quality=jpeg_quality)
             print('Camera Capture 0', time.clock())
 
         if camera1:
             stream1 = io.BytesIO()
-            camera1.capture(stream1, format='jpeg', quality=70)
+            camera1.capture(stream1, format='jpeg', quality=jpeg_quality)
             print('Camera Capture 1', time.clock())
 
         if camera0:
