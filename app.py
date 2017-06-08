@@ -31,12 +31,11 @@ configDefault = configparser.ConfigParser()
 configDefault.read('config-default.ini')
 configDefault_camera_options = json.loads(json.dumps(dict(configDefault.items('camera'))))
 for key, value in configDefault_camera_options.items():
-    print(key, value)
     try:
         configKeyValue = config.get('camera', key)
-        print('camera', key, configKeyValue)
+        print(configKeyValue, value, '(config)')
     except:
-        print("\tset default config -> " + key + " : " + value)
+        print(key, value, '(default)')
         config.set('camera', key, value)
 
 # camera
