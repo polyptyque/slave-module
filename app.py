@@ -93,10 +93,10 @@ def update_master_configuration(options):
 def init_camera_options(cam_id, rotation):
 
     # Resolution
-    resolution = picamera.PiResolution(cam_width, cam_height)
+    #resolution = picamera.PiResolution(cam_width, cam_height)
 
     # Start the camera
-    camera = picamera.PiCamera(camera_num=cam_id, resolution=resolution)
+    camera = picamera.PiCamera(camera_num=cam_id)
 
     # Rotation
     camera.rotation = rotation
