@@ -351,7 +351,7 @@ import atexit
 def appexit():
     if cam_preview:
         print("Stop Preview")
-        camera1.stop_preview()
+        camera0.stop_preview()
 
 
 atexit.register(appexit)
