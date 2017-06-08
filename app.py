@@ -102,10 +102,10 @@ def init_camera_options(cam_id, rotation):
     camera.rotation = rotation
 
     # Exposure
-    camera.exposure_mode = 'off'
+    #camera.exposure_mode = 'off'
 
     # Automatic White balance
-    camera.awb_mode = 'off'
+    #camera.awb_mode = 'off'
 
     # Camera resolution
     camera.resolution = (cam_height, cam_width)
@@ -114,7 +114,7 @@ def init_camera_options(cam_id, rotation):
     camera.led = 0
 
     # Horizontal flip
-    camera.hflip = True
+    #camera.hflip = True
 
     # Update camera options
     update_camera_options(camera)
@@ -132,6 +132,8 @@ def update_camera_options(camera):
     # si la caméra n'existe pas, on n'essaie même pas
     if camera is None:
         return
+
+    return
 
     # Iso
     camera.iso = int(config.get('camera', 'iso'))
