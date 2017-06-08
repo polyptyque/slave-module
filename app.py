@@ -204,22 +204,34 @@ def set_camera_options(options):
 # Camera startup
 #
 
-
 if not simulation:
     import picamera
 
-    # initialise la camera 0
-    camera0 = init_camera_options(0, cam_0_rotation)
 
-    # initialise la camera 1
-    if cam_count > 1:
-        camera1 = init_camera_options(1, cam_1_rotation)
+def startcamera():
+    global camera0, camera1
+    if not simulation:
+        print("Camera starts...")
 
-    # lance la preview camera
-    if cam_preview:
-        print("Start camera preview")
-        camera0.start_preview()
+        # on arrete la preview si on redémarre
+        if cam_preview and camera0:
+            camera0.stop_preview()
 
+        # initialise la camera 0
+        camera0 = init_camera_options(0, cam_0_rotation)
+
+        # initialise la camera 1
+        if cam_count > 1:
+            camera1 = init_camera_options(1, cam_1_rotation)
+
+        # lance la preview camera
+        if cam_preview:
+            print("Start camera preview")
+            camera0.start_preview()
+
+
+# initial start
+startcamera()
 
 #
 # SEND IMAGES
@@ -353,6 +365,8 @@ while True:
         takeimages(message['id'])
     elif message['action'] == 'update_master_configuration':
         update_master_configuration(message)
+    elif message['action'] == 'restart_camera':
+        startcamera()
     elif message['action'] == 'get_camera_options':
         get_camera_options()
     elif message['action'] == 'set_camera_options':
