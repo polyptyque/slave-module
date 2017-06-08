@@ -26,6 +26,14 @@ if not os.path.isfile('config.ini'):
 config = configparser.ConfigParser()
 config.read('config.ini')
 
+# config default upgrade
+configDefault = configparser.ConfigParser()
+configDefault.read('config.ini')
+configDefault_camera_options = json.loads(json.dumps(dict(configDefault.items('camera'))))
+for key, value in configDefault_camera_options.items():
+    print("\t default" + key + " : " + value)
+    print(config.get('camera', key))
+
 # camera
 camera0 = None
 camera1 = None
@@ -54,9 +62,7 @@ cam_preview = config['camera']['preview'] == 'yes'
 cam_0_rotation = int(config['camera']['rotation_0'])
 cam_1_rotation = int(config['camera']['rotation_1'])
 camera_auto = config['camera']['auto'] == 'on'
-if config.get('camera', 'use_video_port') is None:
-    config.set('camera','use_video_port','off')
-use_video_port = config.get('camera','use_video_port') == 'on'
+use_video_port = config.get('camera', 'use_video_port') == 'on'
 jpeg_quality = int(config.get('camera', 'jpeg_quality'))
 cache_path = 'cache/'
 
