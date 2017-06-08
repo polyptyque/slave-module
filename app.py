@@ -27,18 +27,30 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 
 # config default upgrade
-configDefault = configparser.ConfigParser()
-configDefault.read('config-default.ini')
-if not config.has_section('camera'):
-    config.add_section('camera')
-configDefault_camera_options = json.loads(json.dumps(dict(configDefault.items('camera'))))
-for key, value in configDefault_camera_options.items():
-    try:
-        configKeyValue = config.get('camera', key)
-        print("\t camera ", key, configKeyValue)
-    except:
-        print("\t camera ", key, value, '(default)')
-        config.set('camera', key, value)
+
+
+def defaut_camera_config(reset=False):
+    config_default = configparser.ConfigParser()
+    config_default.read('config-default.ini')
+    if not config.has_section('camera'):
+        config.add_section('camera')
+    config_default_camera_options = json.loads(json.dumps(dict(config_default.items('camera'))))
+    for key, value in config_default_camera_options.items():
+        try:
+            config_key_value = config.get('camera', key)
+            if reset:
+                config.set('camera', key, value)
+                print("\t camera ", key, value, '(reset)')
+            else:
+                print("\t camera ", key, config_key_value)
+        except:
+            print("\t camera ", key, value, '(default)')
+            config.set('camera', key, value)
+    if reset:
+        print("Reset and exit")
+        quit()
+
+defaut_camera_config()
 
 # camera
 camera0 = None
@@ -52,25 +64,29 @@ stream1 = None
 shooting = False
 
 # variables par défaut
-runmode = config['app']['runmode']
-simulation = runmode == "simulation"
-master_hostname = config['master']['hostname']
-master_port = config['master']['port']
-master_base_url = 'http://' + master_hostname + ':' + master_port
-post_url = master_base_url + '/post'
-config_url = master_base_url + '/config'
-mod_id = config['module']['id']
-udp_port = int(config['udp']['port'])
-cam_count = int(config['camera']['count'])
-cam_width = int(config['camera']['width'])
-cam_height = int(config['camera']['height'])
-cam_preview = config['camera']['preview'] == 'yes'
-cam_0_rotation = int(config['camera']['rotation_0'])
-cam_1_rotation = int(config['camera']['rotation_1'])
-camera_auto = config['camera']['auto'] == 'on'
-use_video_port = config.get('camera', 'use_video_port') == 'on'
-jpeg_quality = int(config.get('camera', 'jpeg_quality'))
-cache_path = 'cache/'
+try:
+    runmode = config['app']['runmode']
+    simulation = runmode == "simulation"
+    master_hostname = config['master']['hostname']
+    master_port = config['master']['port']
+    master_base_url = 'http://' + master_hostname + ':' + master_port
+    post_url = master_base_url + '/post'
+    config_url = master_base_url + '/config'
+    mod_id = config['module']['id']
+    udp_port = int(config['udp']['port'])
+    cam_count = int(config['camera']['count'])
+    cam_width = int(config['camera']['width'])
+    cam_height = int(config['camera']['height'])
+    cam_preview = config['camera']['preview'] == 'yes'
+    cam_preview_started = False
+    cam_0_rotation = int(config['camera']['rotation_0'])
+    cam_1_rotation = int(config['camera']['rotation_1'])
+    camera_auto = config['camera']['auto'] == 'on'
+    use_video_port = config.get('camera', 'use_video_port') == 'on'
+    jpeg_quality = int(config.get('camera', 'jpeg_quality'))
+    cache_path = 'cache/'
+except:
+    defaut_camera_config(reset=True)
 
 print('Slave module id : ', mod_id)
 print('Run mode : ', runmode)
@@ -293,11 +309,29 @@ def startcamera():
         # lance la preview camera
         if cam_preview:
             print("Start camera 0 preview")
+            cam_preview_started = True
             camera0.start_preview()
 
 
 # initial start
 startcamera()
+
+#
+# Toggle Preview
+#
+
+
+def toggle_preview():
+    global cam_preview_started, cam_preview
+    if cam_preview:
+        if cam_preview_started:
+            print('Toggle Off preview')
+            camera0.stop_preview()
+            cam_preview_started = False
+        else:
+            print('Toggle On preview')
+            camera0.start_preview()
+            cam_preview_started = True
 
 #
 # SEND IMAGES
@@ -414,10 +448,11 @@ import atexit
 
 
 def appexit():
+    global cam_preview_started
     if cam_preview:
         print("Stop Preview")
         camera0.stop_preview()
-
+        cam_preview_started = False
 
 atexit.register(appexit)
 
@@ -433,6 +468,8 @@ while True:
         update_master_configuration(message)
     elif message['action'] == 'restart_camera':
         startcamera()
+    elif message['action'] == 'toggle_preview':
+        toggle_preview()
     elif message['action'] == 'get_status':
         get_status()
     elif message['action'] == 'get_camera_options':
