@@ -54,7 +54,7 @@ cam_preview = config['camera']['preview'] == 'yes'
 cam_0_rotation = int(config['camera']['rotation_0'])
 cam_1_rotation = int(config['camera']['rotation_1'])
 camera_auto = config['camera']['auto'] == 'on'
-use_video_port = str(config.get('camera', 'use_video_port')) == 'on'
+use_video_port = str(config['camera']['use_video_port']) == 'on'
 jpeg_quality = int(config.get('camera', 'jpeg_quality'))
 cache_path = 'cache/'
 
