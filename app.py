@@ -26,6 +26,13 @@ if not os.path.isfile('config.ini'):
 config = configparser.ConfigParser()
 config.read('config.ini')
 
+
+def save_config():
+    global config
+    config_file = open("config.ini", "w")
+    config.write(config_file)
+    print("config saved")
+
 # config default upgrade
 
 
@@ -48,6 +55,7 @@ def defaut_camera_config(reset=False):
             config.set('camera', key, value)
     if reset:
         print("Reset and exit")
+        save_config()
         quit()
 
 defaut_camera_config()
@@ -92,13 +100,6 @@ print('Slave module id : ', mod_id)
 print('Run mode : ', runmode)
 print('Cam count : ', cam_count)
 print('Server Url : ' + master_base_url)
-
-
-def save_config():
-    global config
-    config_file = open("config.ini", "w")
-    config.write(config_file)
-    print("config saved")
 
 
 #
