@@ -163,7 +163,7 @@ def update_camera_options(camera):
         camera.resolution = (cam_height, cam_width)
 
         # Led off
-        camera.led = 0
+        # camera.led = 0
 
 
     # Iso
