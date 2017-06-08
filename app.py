@@ -53,6 +53,8 @@ cam_height = int(config['camera']['height'])
 cam_preview = config['camera']['preview'] == 'yes'
 cam_0_rotation = int(config['camera']['rotation_0'])
 cam_1_rotation = int(config['camera']['rotation_1'])
+camera_auto = config['camera']['auto'] == 'on'
+use_video_port = config['camera']['use_video_port'] == 'on'
 jpeg_quality = int(config['camera']['jpeg_quality'])
 cache_path = 'cache/'
 
@@ -102,21 +104,6 @@ def init_camera_options(cam_id, rotation):
     # Rotation
     camera.rotation = rotation
 
-    # Exposure
-    #camera.exposure_mode = 'off'
-
-    # Automatic White balance
-    #camera.awb_mode = 'off'
-
-    # Camera resolution
-    camera.resolution = (cam_height, cam_width)
-
-    # Led off
-    camera.led = 0
-
-    # Horizontal flip
-    #camera.hflip = True
-
     # Update camera options
     update_camera_options(camera)
 
@@ -129,12 +116,43 @@ def init_camera_options(cam_id, rotation):
 
 
 def update_camera_options(camera):
-
+    global camera_auto
     # si la caméra n'existe pas, on n'essaie même pas
     if camera is None:
         return
 
-    return
+    # Horizontal flip
+    camera.hflip = True
+
+    # Camera resolution
+    camera.resolution = (cam_width, cam_height)
+
+    # Led off
+    camera.led = 0
+
+    # mode automatique
+    if camera_auto:
+        print('Mode automatique')
+        # Exposure
+        camera.exposure_mode = 'auto'
+
+        # Automatic White balance
+        camera.awb_mode = 'auto'
+
+        return
+    else:
+        # Exposure
+        camera.exposure_mode = 'off'
+
+        # Automatic White balance
+        camera.awb_mode = 'off'
+
+        # Camera resolution
+        camera.resolution = (cam_height, cam_width)
+
+        # Led off
+        camera.led = 0
+
 
     # Iso
     camera.iso = int(config.get('camera', 'iso'))
@@ -191,15 +209,21 @@ def get_camera_options():
 
 
 def set_camera_options(options):
-    global config, camera0, camera1, jpeg_quality
+    global config, camera0, camera1, camera_auto, jpeg_quality, use_video_port
 
     print('Update Camera options to ')
     for key, value in options.items():
         print("\t"+key+" : "+value)
         config.set('camera', key, value)
 
-    print('Jpeg quality', jpeg_quality)
+    camera_auto = config.get('camera', 'auto') == 'on'
+    print('camera_auto quality', camera_auto)
+
     jpeg_quality = int(config.get('camera', 'jpeg_quality'))
+    print('Jpeg quality', jpeg_quality)
+
+    use_video_port = config.get('camera', 'use_video_port') == 'on'
+    print('use_video_port', use_video_port)
 
     update_camera_options(camera0)
     update_camera_options(camera1)
@@ -323,12 +347,12 @@ def takeimages(uid):
 
         if camera0:
             stream0 = io.BytesIO()
-            camera0.capture(stream0, format='jpeg', quality=jpeg_quality)
+            camera0.capture(stream0, format='jpeg', quality=jpeg_quality, use_video_port=use_video_port)
             print('Camera Capture 0', time.clock())
 
         if camera1:
             stream1 = io.BytesIO()
-            camera1.capture(stream1, format='jpeg', quality=jpeg_quality)
+            camera1.capture(stream1, format='jpeg', quality=jpeg_quality, use_video_port=use_video_port)
             print('Camera Capture 1', time.clock())
 
         if camera0:
