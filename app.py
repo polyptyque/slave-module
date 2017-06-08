@@ -33,7 +33,7 @@ configDefault_camera_options = json.loads(json.dumps(dict(configDefault.items('c
 for key, value in configDefault_camera_options.items():
     try:
         config.get('camera', key)
-    except configparser.NoOptionError:
+    except KeyError:
         print("\tset default config -> " + key + " : " + value)
         config.set('camera', key, value)
 
