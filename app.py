@@ -139,8 +139,8 @@ def update_camera_options(camera):
     # Camera resolution
     camera.resolution = (cam_width, cam_height)
 
-    # Led off
-    camera.led = 0
+    # Led off (requiert GPIO lib)
+    # camera.led = 0
 
     # mode automatique
     if camera_auto:
