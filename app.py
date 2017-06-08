@@ -29,6 +29,8 @@ config.read('config.ini')
 # config default upgrade
 configDefault = configparser.ConfigParser()
 configDefault.read('config-default.ini')
+if not config.has_section('camera'):
+    config.add_section('camera')
 configDefault_camera_options = json.loads(json.dumps(dict(configDefault.items('camera'))))
 for key, value in configDefault_camera_options.items():
     try:
