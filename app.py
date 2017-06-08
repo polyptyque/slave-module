@@ -162,7 +162,7 @@ def update_camera_options(camera):
         camera.awb_mode = 'off'
 
         # Camera resolution
-        camera.resolution = (cam_height, cam_width)
+        camera.resolution = cam_width+'x'+cam_height
 
         # Led off
         # camera.led = 0
