@@ -331,6 +331,18 @@ sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 sock.bind(('', udp_port))
 print("bind socket on port " + str(udp_port))
 
+# Exit
+import atexit
+
+
+def appexit():
+    if cam_preview:
+        print("Stop Preview")
+        camera1.stop_preview()
+
+
+atexit.register(appexit)
+
 while True:
     data, addr = sock.recvfrom(1024)  # buffer size is 1024 bytes
     print("received message:" + str(type(data)))
