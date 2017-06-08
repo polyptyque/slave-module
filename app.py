@@ -196,6 +196,22 @@ def update_camera_options(camera):
         print("camera.preview.window", camera.preview.window)
         print("camera.preview.crop", camera.preview.crop)
 
+#
+# GET STATUS
+#
+
+
+def get_status():
+    global config, mod_id
+    # headers
+    headers = {
+        'content-type': 'application/json',
+        'x-from': 'cm' + mod_id,
+        'x-action': 'get_status'
+    }
+
+    status = {"status": "ok", "mod_id": mod_id}
+    requests.post(config_url, json=status, headers=headers)
 
 #
 # GET CAMERA OPTIONS
@@ -417,6 +433,8 @@ while True:
         update_master_configuration(message)
     elif message['action'] == 'restart_camera':
         startcamera()
+    elif message['action'] == 'get_status':
+        get_status()
     elif message['action'] == 'get_camera_options':
         get_camera_options()
     elif message['action'] == 'set_camera_options':
