@@ -214,9 +214,11 @@ def startcamera():
         print("Camera starts...")
 
         # on arrete la preview si on redémarre
-        if cam_preview and camera0:
-            camera0.stop_preview()
-            time.sleep(1)
+        if cam_preview:
+            if camera0:
+                print("Stop Preview")
+                camera0.stop_preview()
+                time.sleep(1)
 
         # initialise la camera 0
         camera0 = init_camera_options(0, cam_0_rotation)
