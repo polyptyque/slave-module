@@ -9,6 +9,8 @@ import requests
 import time
 import io
 import json
+import http.server
+import socketserver
 
 rootPath = os.path.dirname(os.path.abspath(__file__))
 #os.path.dirname(rootpath)
@@ -36,9 +38,15 @@ def save_config():
 # config default upgrade
 
 
-def defaut_camera_config(reset=False):
+def defaut_config_init(reset=False):
     config_default = configparser.ConfigParser()
     config_default.read('config-default.ini')
+    # camera tcp default
+    if not config.has_section('tcp'):
+        config.add_section('tcp')
+        config.set('tcp', 'port', config_default.get('tcp', 'port'))
+        save_config()
+    # camera config
     if not config.has_section('camera'):
         config.add_section('camera')
     config_default_camera_options = json.loads(json.dumps(dict(config_default.items('camera'))))
@@ -58,7 +66,7 @@ def defaut_camera_config(reset=False):
         save_config()
         quit()
 
-defaut_camera_config()
+defaut_config_init()
 
 # camera
 camera0 = None
@@ -93,8 +101,9 @@ try:
     use_video_port = config.get('camera', 'use_video_port') == 'on'
     jpeg_quality = int(config.get('camera', 'jpeg_quality'))
     cache_path = 'cache/'
+    tcp_port = int(config['tcp']['port'])
 except:
-    defaut_camera_config(reset=True)
+    defaut_config_init(reset=True)
 
 print('Slave module id : ', mod_id)
 print('Run mode : ', runmode)
@@ -227,6 +236,7 @@ def get_status():
         'x-action': 'get_status'
     }
 
+    print('get_status')
     status = {"status": "ok", "mod_id": mod_id}
     requests.post(config_url, json=status, headers=headers)
 
@@ -335,11 +345,31 @@ def toggle_preview():
             cam_preview_started = True
 
 #
+# Confirmation de la prise de vue
+#
+
+
+def confirm_shoot(uid, success):
+    global post_url
+    headers = {
+        'x-run-mod': runmode,
+        'x-mod-id': mod_id,
+        'x-cam-count': str(cam_count),
+        'x-shot-uid': uid,
+        'x-action': 'confirm_shot',
+        'x-status': 'ok' if success else 'fail'
+    }
+
+    print("confirm shot...")
+    r = requests.post(post_url, headers=headers)
+    print(r.text)
+
+#
 # SEND IMAGES
 #
 
 
-def sendimages(uid):
+def send_images(uid):
     global post_url
     # fichiers images
 
@@ -352,7 +382,7 @@ def sendimages(uid):
         src0 = 'test-a.jpg'
         src1 = 'test-b.jpg'
 
-    if camera1:
+    if cam_count > 1:
         # mode stereo
         print("open stereo", src0, "and", src1)
         files = [
@@ -369,12 +399,13 @@ def sendimages(uid):
     headers = {
         'x-run-mod': runmode,
         'x-mod-id': mod_id,
-        'x-cam-count': cam_count,
-        'x-shot-id': uid
+        'x-cam-count': str(cam_count),
+        'x-shot-id': uid,
+        'x-action': 'send_image'
     }
 
-    r = requests.post(post_url, files=files, headers=headers)
-    print(r.text)
+    requests.post(post_url, files=files, headers=headers)
+    print("Upload success.")
 
 
 def savejpegstream(uid, cam_id, stream):
@@ -395,6 +426,11 @@ def savejpegstream(uid, cam_id, stream):
 
 def takeimages(uid):
     global shooting, stream0, stream1
+
+    # Si on est en cours de prise de vue, on attend
+    if shooting:
+        confirm_shoot(uid, False)
+        return
 
     # Oui, les cameras font des prises de vues !
     shooting = True
@@ -435,7 +471,8 @@ def takeimages(uid):
         b = time.clock()
         print('image shot in ' + str(round((b - a) * 1000)) + 'ms ')
 
-    sendimages(uid)
+    confirm_shoot(uid, True)
+    # send_images(uid)
 
 
 # serveur UDP
@@ -457,14 +494,20 @@ def appexit():
 
 atexit.register(appexit)
 
+#
+# UDP server
+#
+
 while True:
     data, addr = sock.recvfrom(1024)  # buffer size is 1024 bytes
-    print("received message:" + str(type(data)))
     message = json.loads(data.decode('utf-8'))
-    print(addr)
+    print("received message, from ", addr, ':')
+    print(message)
     if message['action'] == 'shot':
-        print("shot", message['id'])
-        takeimages(message['id'])
+        print("shot", message['uid'])
+        takeimages(message['uid'])
+    elif message['action'] == 'send_images':
+        send_images(message['uid'])
     elif message['action'] == 'update_master_configuration':
         update_master_configuration(message)
     elif message['action'] == 'restart_camera':
