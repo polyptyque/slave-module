@@ -117,10 +117,13 @@ print('Server Url : ' + master_base_url)
 
 
 def update_master_configuration(options):
-    global config, master_hostname, master_base_url, post_url, config_url
+    global config, master_hostname, master_port, master_base_url, post_url, config_url
     if options['hostname'] is not None:
         master_hostname = options['hostname']
         config['master']['hostname'] = master_hostname
+    if options['port'] is not None:
+        master_port = options['port']
+        config['master']['port'] = master_hostname
     master_base_url = 'http://' + master_hostname + ':' + master_port
     post_url = master_base_url + '/post'
     config_url = master_base_url + '/config'
@@ -370,7 +373,7 @@ def confirm_shoot(uid, success):
 
 
 def send_images(uid):
-    global post_url
+    global post_url, shooting
     # fichiers images
 
     filename0 = uid + '-0.jpg'
@@ -400,12 +403,13 @@ def send_images(uid):
         'x-run-mod': runmode,
         'x-mod-id': mod_id,
         'x-cam-count': str(cam_count),
-        'x-shot-id': uid,
+        'x-shot-uid': uid,
         'x-action': 'send_image'
     }
 
     requests.post(post_url, files=files, headers=headers)
     print("Upload success.")
+    shooting = False
 
 
 def savejpegstream(uid, cam_id, stream):
