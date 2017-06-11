@@ -123,7 +123,7 @@ def update_master_configuration(options):
         config['master']['hostname'] = master_hostname
     if options['port'] is not None:
         master_port = options['port']
-        config['master']['port'] = master_hostname
+        config['master']['port'] = master_port
     master_base_url = 'http://' + master_hostname + ':' + master_port
     post_url = master_base_url + '/post'
     config_url = master_base_url + '/config'
@@ -242,6 +242,15 @@ def get_status():
     print('get_status')
     status = {"status": "ok", "mod_id": mod_id}
     requests.post(config_url, json=status, headers=headers)
+
+#
+# RESET SHOOTING TO INITIAL STATE
+#
+
+
+def reset_shooting():
+    global shooting
+    shooting = False
 
 #
 # GET CAMERA OPTIONS
@@ -520,6 +529,8 @@ while True:
         toggle_preview()
     elif message['action'] == 'get_status':
         get_status()
+    elif message['action'] == 'reset_shooting':
+        reset_shooting()
     elif message['action'] == 'get_camera_options':
         get_camera_options()
     elif message['action'] == 'set_camera_options':
