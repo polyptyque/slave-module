@@ -9,8 +9,6 @@ import requests
 import time
 import io
 import json
-import http.server
-import socketserver
 
 rootPath = os.path.dirname(os.path.abspath(__file__))
 #os.path.dirname(rootpath)
@@ -102,6 +100,7 @@ try:
     jpeg_quality = int(config.get('camera', 'jpeg_quality'))
     cache_path = 'cache/'
     tcp_port = int(config['tcp']['port'])
+    is_master = mod_id == 0
 except:
     defaut_config_init(reset=True)
 
@@ -286,8 +285,9 @@ def set_camera_options(options):
 
     print('Update Camera options to ')
     for key, value in options.items():
-        print("\t"+key+" : "+value)
-        config.set('camera', key, value)
+        if value:
+            print("\t"+key+" : "+value)
+            config.set('camera', key, value)
 
     camera_auto = config.get('camera', 'auto') == 'on'
     print('camera_auto quality', camera_auto)
@@ -521,6 +521,20 @@ atexit.register(appexit)
 #
 # UDP server
 #
+
+# Socket IO
+
+from socketIO_client import SocketIO, LoggingNamespace
+
+
+def on_logger(*args):
+    print(args)
+
+socketIO = SocketIO(master_hostname, master_port)
+socketIO.on('logger', on_logger)
+socketIO.wait()
+
+print("OK.")
 
 while True:
     data, addr = sock.recvfrom(1024)  # buffer size is 1024 bytes
