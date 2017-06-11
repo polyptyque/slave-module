@@ -241,8 +241,10 @@ def get_status():
 
     print('get_status')
     status = {"status": "ok", "mod_id": mod_id}
-    requests.post(config_url, json=status, headers=headers)
-
+    try:
+        requests.post(config_url, json=status, headers=headers)
+    except:
+        print('HTTP request error (get_status)')
 #
 # RESET SHOOTING TO INITIAL STATE
 #
@@ -270,8 +272,10 @@ def get_camera_options():
 
     camera_options = json.loads(json.dumps(dict(config.items('camera'))))
     print('get_camera_options post',camera_options)
-    requests.post(config_url, json=camera_options, headers=headers)
-
+    try:
+        requests.post(config_url, json=camera_options, headers=headers)
+    except:
+        print('HTTP request error (get_camera_options)')
 #
 # SET CAMERA OPTIONS
 #
@@ -373,8 +377,11 @@ def confirm_shoot(uid, success):
     }
 
     print("confirm shot...")
-    r = requests.post(post_url, headers=headers)
-    print(r.text)
+    try:
+        r = requests.post(post_url, headers=headers)
+        print(r.text)
+    except:
+        print('HTTP request error (confirm_shoot)')
 
 #
 # SEND IMAGES
@@ -416,9 +423,13 @@ def send_images(uid):
         'x-action': 'send_image'
     }
 
-    requests.post(post_url, files=files, headers=headers)
-    print("Upload success.")
-    shooting = False
+    try:
+        requests.post(post_url, files=files, headers=headers)
+        print("Upload success.")
+    except:
+        print('HTTP request error (image upload)')
+    finally:
+        shooting = False
 
 
 def savejpegstream(uid, cam_id, stream):
