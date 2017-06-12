@@ -503,6 +503,22 @@ def takeimages(uid):
     confirm_shoot(uid, True)
     # send_images(uid)
 
+# transfert_sftp
+if is_master:
+    import pysftp
+
+
+def transfert_sftp(options):
+    global config
+    if not is_master:
+        return
+    filepath = options['filepath']
+    print('starting sftp connection on', config['sftp']['host'], filepath)
+    with pysftp.Connection(config['sftp']['host'], username=config['sftp']['username'], password=config['sftp']['password'], port=config['sftp']['port']) as sftp:
+        with sftp.cd(config['sftp']['rootdir']):  # temporarily chdir to public
+            sftp.put()  # upload file to public/ on remote
+            print('sftp transfert done.')
+
 
 # serveur UDP
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -552,5 +568,7 @@ while True:
         get_camera_options()
     elif message['action'] == 'set_camera_options':
         set_camera_options(message['options'])
+    elif message['action'] == 'transfert_sftp':
+        transfert_sftp(message['options'])
     else:
         print("action inconnue")
