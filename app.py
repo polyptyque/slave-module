@@ -101,6 +101,7 @@ try:
     cache_path = 'cache/'
     tcp_port = int(config['tcp']['port'])
     is_master = mod_id == 0
+    current_uid = "default"
 except:
     defaut_config_init(reset=True)
 
@@ -449,12 +450,16 @@ def savejpegstream(uid, cam_id, stream):
 
 
 def takeimages(uid):
-    global shooting, stream0, stream1
+    global shooting, current_uid, stream0, stream1
 
     # Si on est en cours de prise de vue, on attend
     if shooting:
-        confirm_shoot(uid, False)
+        if current_uid != uid:
+            confirm_shoot(uid, False)
+        # on ne prend pas 2 fois la même image
         return
+
+    current_uid = uid
 
     # Oui, les cameras font des prises de vues !
     shooting = True
