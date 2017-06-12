@@ -506,6 +506,7 @@ def takeimages(uid):
 # transfert_sftp
 if is_master:
     import pysftp
+    print("Import du module sftp")
 
 
 def transfert_sftp(options):
