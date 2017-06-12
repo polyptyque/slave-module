@@ -522,19 +522,6 @@ atexit.register(appexit)
 # UDP server
 #
 
-# Socket IO
-
-from socketIO_client import SocketIO, LoggingNamespace
-
-
-def on_logger(*args):
-    print(args)
-
-socketIO = SocketIO(master_hostname, master_port)
-socketIO.on('logger', on_logger)
-socketIO.wait()
-
-print("OK.")
 
 while True:
     data, addr = sock.recvfrom(1024)  # buffer size is 1024 bytes
