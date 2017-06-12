@@ -100,7 +100,7 @@ try:
     jpeg_quality = int(config.get('camera', 'jpeg_quality'))
     cache_path = 'cache/'
     tcp_port = int(config['tcp']['port'])
-    is_master = mod_id == 0
+    is_master = mod_id == '0'
     current_uid = "default"
 except:
     defaut_config_init(reset=True)
