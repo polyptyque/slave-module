@@ -514,10 +514,14 @@ def transfert_sftp(options):
     if not is_master:
         return
     filepath = options['filepath']
-    print('starting sftp connection on', config['sftp']['host'],config['sftp']['port'], filepath)
+    if not os.path.isfile(filepath):
+        return print("filepath no exists", filepath)
+
+    print('starting sftp connection on', config['sftp']['host'], 'port', config['sftp']['port'], filepath)
     with pysftp.Connection(config['sftp']['host'], username=config['sftp']['username'], password=config['sftp']['password'], port=int(config['sftp']['port'])) as sftp:
+        print("sftp cd ", config['sftp']['rootdir'])
         with sftp.cd(config['sftp']['rootdir']):  # temporarily chdir to public
-            sftp.put()  # upload file to public/ on remote
+            sftp.put(filepath)  # upload file to public/ on remote
             print('sftp transfert done.')
 
 
