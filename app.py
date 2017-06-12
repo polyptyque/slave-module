@@ -86,6 +86,7 @@ try:
     master_base_url = 'http://' + master_hostname + ':' + master_port
     post_url = master_base_url + '/post'
     config_url = master_base_url + '/config'
+    ftp_complete_url = master_base_url + '/ftp_complete'
     mod_id = config['module']['id']
     udp_port = int(config['udp']['port'])
     cam_count = int(config['camera']['count'])
@@ -117,7 +118,7 @@ print('Server Url : ' + master_base_url)
 
 
 def update_master_configuration(options):
-    global config, master_hostname, master_port, master_base_url, post_url, config_url
+    global config, master_hostname, master_port, master_base_url, post_url, config_url, ftp_complete_url
     if options['hostname'] is not None:
         master_hostname = options['hostname']
         config['master']['hostname'] = master_hostname
@@ -127,6 +128,7 @@ def update_master_configuration(options):
     master_base_url = 'http://' + master_hostname + ':' + master_port
     post_url = master_base_url + '/post'
     config_url = master_base_url + '/config'
+    ftp_complete_url = master_base_url + '/ftp_complete'
     print("master hostname updated to " + master_base_url)
     save_config()
 
@@ -509,6 +511,11 @@ if is_master:
     print("Import du module sftp")
 
 
+def transfert_sftp_progress(transferred, toBeTransferred):
+    percent = round(100*transferred/toBeTransferred,2)
+    print("sftp progress: ", percent, "%\tTransferred: ", transferred, "\tOut of: ", toBeTransferred)
+
+
 def transfert_sftp(options):
     global config
     if not is_master:
@@ -521,8 +528,9 @@ def transfert_sftp(options):
     with pysftp.Connection(config['sftp']['host'], username=config['sftp']['username'], password=config['sftp']['password'], port=int(config['sftp']['port'])) as sftp:
         print("sftp cd ", config['sftp']['rootdir'])
         with sftp.cd(config['sftp']['rootdir']):  # temporarily chdir to public
-            sftp.put(filepath)  # upload file to public/ on remote
+            sftp.put(filepath, callback=transfert_sftp_progress)  # upload file to public/ on remote
             print('sftp transfert done.')
+            requests.post(ftp_complete_url, json=options)
 
 
 # serveur UDP
