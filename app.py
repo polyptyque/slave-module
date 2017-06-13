@@ -9,6 +9,7 @@ import requests
 import time
 import io
 import json
+import os
 
 rootPath = os.path.dirname(os.path.abspath(__file__))
 #os.path.dirname(rootpath)
@@ -426,8 +427,28 @@ def send_images(uid):
         'x-action': 'send_image'
     }
 
+    master_cache_path = "/home/pi/master-module/cache/"+uid+"/"
+    master_file0_path = master_cache_path+config['module']['cam_id_0']+'.jpg'
+    master_file1_path = master_cache_path+config['module']['cam_id_1']+'.jpg'
+    local_file0_path = os.path.abspath(src0)
+    local_file1_path = os.path.abspath(src1)
+
+    if not is_master:
+        print("start scp", local_file0_path, master_file0_path)
+        os.system("scp "+local_file0_path+" master_F93:"+master_file0_path)
+    else:
+        os.system("cp "+local_file0_path+" "+master_file0_path)
+    if cam_count > 1:
+        if not is_master:
+            print("start scp", local_file1_path, master_file1_path)
+            os.system("scp " + local_file1_path + " master_F93:" + master_file1_path)
+        else:
+            os.system("cp " + local_file1_path + " " + master_file1_path)
+    print("copy done.")
+
     try:
-        requests.post(post_url, files=files, headers=headers)
+        # requests.post(post_url, files=files, headers=headers)
+        requests.post(post_url, headers=headers)
         print("Upload success.")
     except:
         print('HTTP request error (image upload)')
