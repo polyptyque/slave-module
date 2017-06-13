@@ -434,7 +434,7 @@ def send_images(uid):
     local_file1_path = os.path.abspath(src1)
 
     if not is_master:
-        scp = "scp "+local_file0_path+" "+master_hostname+":"+master_file0_path
+        scp = "sudo -iu pi scp "+local_file0_path+" "+master_hostname+":"+master_file0_path
         print(scp)
         os.system(scp)
     else:
@@ -443,10 +443,13 @@ def send_images(uid):
         os.system(cp)
     if cam_count > 1:
         if not is_master:
-            scp = "scp " + local_file1_path + " "+master_hostname+":" + master_file1_path
+            scp = "sudo -iu pi scp " + local_file1_path + " "+master_hostname+":" + master_file1_path
             print(scp)
             os.system(scp)
     print("copy done.")
+    #
+    #
+    #sudo -iu pi scp /home/pi/slave-module/cache/1497315211839_04e5120e0831ddc3d16c9cf1b972db3e937c499c-0.jpg 192.168.1.75:/home/pi/master-module/cache/1497315211839_04e5120e0831ddc3d16c9cf1b972db3e937c499c/1.jpg
 
     try:
         # requests.post(post_url, files=files, headers=headers)
