@@ -10,6 +10,7 @@ import time
 import io
 import json
 import os
+from shutil import copyfile
 
 rootPath = os.path.dirname(os.path.abspath(__file__))
 #os.path.dirname(rootpath)
@@ -95,6 +96,8 @@ try:
     cam_height = int(config['camera']['height'])
     cam_preview = config['camera']['preview'] == 'yes'
     cam_preview_started = False
+    cam_id_0 = config['module']['cam_id_0']
+    cam_id_1 = config['module']['cam_id_1']
     cam_0_rotation = int(config['camera']['rotation_0'])
     cam_1_rotation = int(config['camera']['rotation_1'])
     camera_auto = config['camera']['auto'] == 'on'
@@ -396,28 +399,16 @@ def send_images(uid):
     global post_url, shooting
     # fichiers images
 
-    filename0 = uid + '-0.jpg'
-    filename1 = uid + '-1.jpg'
-    if not simulation:
-        src0 = cache_path+filename0
-        src1 = cache_path+filename1
-    else:
-        src0 = 'test-a.jpg'
-        src1 = 'test-b.jpg'
+    uid_path = cache_path+'/'+uid + '/'
+    filename0 = cam_id_0+'.jpg'
+    filename1 = cam_id_1+'.jpg'
+    src0 = uid_path + filename0
+    src1 = uid_path + filename1
+    if simulation:
+        os.mkdir(uid_path)
+        copyfile(os.path.abspath('test-a.jpg'), os.path.abspath(src0))
+        copyfile(os.path.abspath('test-b.jpg'), os.path.abspath(src1))
 
-    if cam_count > 1:
-        # mode stereo
-        print("open stereo", src0, "and", src1)
-        files = [
-            ('a', (filename0, open(src0, 'rb'), 'image/jpg')),
-            ('b', (filename1, open(src1, 'rb'), 'image/jpg'))
-        ]
-    else:
-        # mode mono
-        print("open mono", src0)
-        files = [
-            ('a', (filename0, open(src0, 'rb'), 'image/jpg')),
-        ]
     # headers HTTP applicatif
     headers = {
         'x-run-mod': runmode,
@@ -428,24 +419,23 @@ def send_images(uid):
     }
 
     master_cache_path = "/home/pi/master-module/cache/"+uid+"/"
-    master_file0_path = master_cache_path+config['module']['cam_id_0']+'.jpg'
-    master_file1_path = master_cache_path+config['module']['cam_id_1']+'.jpg'
-    local_file0_path = os.path.abspath(src0)
-    local_file1_path = os.path.abspath(src1)
+    # master_file0_path = master_cache_path+cam_id_0+'.jpg'
+    # master_file1_path = master_cache_path+cam_id_1+'.jpg'
+    local_uid_path = os.path.abspath(uid_path)
 
-    if not is_master:
-        scp = "sudo -iu pi scp "+local_file0_path+" "+master_hostname+":"+master_file0_path
+    if simulation:
+        cp = "cp -r "+local_uid_path+" ../master-module/cache"
+        print(cp)
+        os.system(cp)
+    elif not is_master:
+        scp = "sudo -iu pi scp -r "+local_uid_path+" "+master_hostname+":"+master_cache_path
         print(scp)
         os.system(scp)
     else:
-        cp = "cp "+local_file0_path+" "+master_file0_path
+        cp = "cp "+local_uid_path+" "+master_cache_path
         print(cp)
         os.system(cp)
-    if cam_count > 1:
-        if not is_master:
-            scp = "sudo -iu pi scp " + local_file1_path + " "+master_hostname+":" + master_file1_path
-            print(scp)
-            os.system(scp)
+
     print("copy done.")
     #
     #
@@ -461,12 +451,16 @@ def send_images(uid):
         shooting = False
 
 
-def savejpegstream(uid, cam_id, stream):
+def save_jpeg_stream(uid, cam_id, stream):
     global cache_path
     if stream:
         print("save jpeg stream for camera", cam_id, 'uid', uid)
         print(time.clock())
-        jpeg_path = cache_path+uid+'-'+str(cam_id)+'.jpg'
+        uid_path = cache_path+uid+'/'
+        if not os.path.isdir(uid_path):
+            print('create dir', uid_path)
+            os.mkdir(uid_path)
+        jpeg_path = uid_path+config['module']['cam_id_'+cam_id]+'.jpg'
         print("open", jpeg_path, "...")
         with io.open(jpeg_path, 'wb') as jpeg_file:
             jpeg_file.write(stream.getvalue())
@@ -514,10 +508,10 @@ def takeimages(uid):
             print('Camera Capture 1', time.clock())
 
         if camera0:
-            savejpegstream(uid, 0, stream0)
+            save_jpeg_stream(uid, 0, stream0)
 
         if camera1:
-            savejpegstream(uid, 1, stream1)
+            save_jpeg_stream(uid, 1, stream1)
 
         # static camera shoot in file
         # if camera0:
@@ -532,7 +526,7 @@ def takeimages(uid):
     # send_images(uid)
 
 # transfert_sftp
-if is_master:
+if is_master or simulation:
     import pysftp
     print("Import du module sftp")
 
@@ -544,13 +538,16 @@ def transfert_sftp_progress(transferred, toBeTransferred):
 
 def transfert_sftp(options):
     global config
-    if not is_master:
+    if not is_master and not simulation:
+        print("ignore sftp")
         return
     filepath = options['filepath']
     if not os.path.isfile(filepath):
         return print("filepath no exists", filepath)
 
-    print('starting sftp connection on', config['sftp']['host'], 'port', config['sftp']['port'], filepath)
+    print('starting sftp connection on')
+    print(config['sftp']['host']+':'+config['sftp']['port'])
+    print('filepath:'+filepath)
     with pysftp.Connection(config['sftp']['host'], username=config['sftp']['username'], password=config['sftp']['password'], port=int(config['sftp']['port'])) as sftp:
         print("sftp cd ", config['sftp']['rootdir'])
         with sftp.cd(config['sftp']['rootdir']):  # temporarily chdir to public
