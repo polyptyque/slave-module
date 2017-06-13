@@ -434,16 +434,18 @@ def send_images(uid):
     local_file1_path = os.path.abspath(src1)
 
     if not is_master:
-        print("start scp", local_file0_path, master_file0_path)
-        os.system("scp "+local_file0_path+" master_F93:"+master_file0_path)
+        scp = "scp "+local_file0_path+" "+master_hostname+":"+master_file0_path
+        print(scp)
+        os.system(scp)
     else:
-        os.system("cp "+local_file0_path+" "+master_file0_path)
+        cp = "cp "+local_file0_path+" "+master_file0_path
+        print(cp)
+        os.system(cp)
     if cam_count > 1:
         if not is_master:
-            print("start scp", local_file1_path, master_file1_path)
-            os.system("scp " + local_file1_path + " master_F93:" + master_file1_path)
-        else:
-            os.system("cp " + local_file1_path + " " + master_file1_path)
+            scp = "scp " + local_file1_path + " "+master_hostname+":" + master_file1_path
+            print(scp)
+            os.system(scp)
     print("copy done.")
 
     try:
