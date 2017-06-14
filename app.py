@@ -559,9 +559,10 @@ def transfert_sftp_progress(transferred, toBeTransferred):
         print("sftp progress: ", percent, "%\tTransferred: ", transferred, "\tOut of: ", toBeTransferred)
         duration = time.time() - transfert_start
         requests.post(ftp_progess_url, json={
-            duration: duration,
-            transferred: transferred,
-            toBeTransferred: toBeTransferred
+            "progress": percent,
+            "duration": int(duration),
+            "transferred": transferred,
+            "toBeTransferred": toBeTransferred
         })
     else:
         print('...')
