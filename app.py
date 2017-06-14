@@ -473,7 +473,8 @@ def save_jpeg_stream(uid, cam_id, stream):
         if not os.path.isdir(uid_path):
             print('create dir', uid_path)
             os.mkdir(uid_path, 0o777)
-        jpeg_path = uid_path+config['module']+['cam_id_'+str(cam_id)]+'.jpg'
+
+        jpeg_path = uid_path+config['module']['cam_id_'+str(cam_id)]+'.jpg'
         print("open", jpeg_path, "...")
         with io.open(jpeg_path, 'wb') as jpeg_file:
             jpeg_file.write(stream.getvalue())
