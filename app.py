@@ -431,7 +431,7 @@ def send_images(uid):
         'x-action': 'send_image'
     }
 
-    master_cache_path = "/home/pi/master-module/cache/"+uid+"/"
+    master_cache_path = "/home/pi/master-module/cache/"
     # master_file0_path = master_cache_path+cam_id_0+'.jpg'
     # master_file1_path = master_cache_path+cam_id_1+'.jpg'
     local_uid_path = os.path.abspath(uid_path)
@@ -445,7 +445,7 @@ def send_images(uid):
         print(scp)
         os.system(scp)
     else:
-        cp = "cp "+local_uid_path+" "+master_cache_path
+        cp = "cp -r "+local_uid_path+" "+master_cache_path
         print(cp)
         os.system(cp)
 
