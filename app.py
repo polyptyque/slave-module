@@ -90,6 +90,7 @@ try:
     post_url = master_base_url + '/post'
     config_url = master_base_url + '/config'
     ftp_complete_url = master_base_url + '/ftp_complete'
+    ftp_progess_url = master_base_url + '/ftp_progess'
     mod_id = config['module']['id']
     udp_port = int(config['udp']['port'])
     cam_count = int(config['camera']['count'])
@@ -123,7 +124,8 @@ print('Server Url : ' + master_base_url)
 
 
 def update_master_configuration(options):
-    global config, master_hostname, master_port, master_base_url, post_url, config_url, ftp_complete_url
+    global config, master_hostname, master_port, \
+        master_base_url, post_url, config_url, ftp_complete_url, ftp_progess_url
     if options['hostname'] is not None:
         master_hostname = options['hostname']
         config['master']['hostname'] = master_hostname
@@ -134,6 +136,7 @@ def update_master_configuration(options):
     post_url = master_base_url + '/post'
     config_url = master_base_url + '/config'
     ftp_complete_url = master_base_url + '/ftp_complete'
+    ftp_progess_url = master_base_url + '/ftp_progess'
     print("master hostname updated to " + master_base_url)
     save_config()
 
@@ -544,14 +547,22 @@ if is_master or simulation:
     import pysftp
     print("Import du module sftp")
 
+transfert_start = 0
 
 def transfert_sftp_progress(transferred, toBeTransferred):
+    global ftp_progess_url, transfert_start
     percent = round(100*transferred/toBeTransferred,2)
     print("sftp progress: ", percent, "%\tTransferred: ", transferred, "\tOut of: ", toBeTransferred)
+    duration = time.time() - transfert_start
+    requests.post(ftp_progess_url, json={
+        duration: duration,
+        transferred: transferred,
+        toBeTransferred: toBeTransferred
+    })
 
 
 def transfert_sftp(options):
-    global config
+    global config, transfert_start
     if not is_master and not simulation:
         print("ignore sftp")
         return
@@ -559,7 +570,8 @@ def transfert_sftp(options):
     if not os.path.isfile(filepath):
         return print("filepath no exists", filepath)
 
-    print('starting sftp connection on')
+    transfert_start = time.time()
+    print('starting sftp connection ',transfert_start)
     print(config['sftp']['host']+':'+config['sftp']['port'])
     print('filepath:'+filepath)
     with pysftp.Connection(config['sftp']['host'], username=config['sftp']['username'], password=config['sftp']['password'], port=int(config['sftp']['port'])) as sftp:
