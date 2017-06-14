@@ -1,0 +1,11 @@
+[Unit]
+Description=Polyptique Slave module Service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+ExecStart=/home/pi/slave-module/app.py
+Restart=always
+RestartSec=5
+
