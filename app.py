@@ -11,6 +11,7 @@ import io
 import json
 import os
 from shutil import copyfile
+from shutil import rmtree
 
 rootPath = os.path.dirname(os.path.abspath(__file__))
 #os.path.dirname(rootpath)
@@ -260,6 +261,18 @@ def reset_shooting():
     global shooting
     shooting = False
 
+
+#
+# Purge cache directory
+#
+
+
+def purge_cache():
+    global cache_path
+    print('purge des caches')
+    rmtree(cache_path)
+    os.mkdir(cache_path, 0o777)
+
 #
 # GET CAMERA OPTIONS
 #
@@ -405,7 +418,7 @@ def send_images(uid):
     src0 = uid_path + filename0
     src1 = uid_path + filename1
     if simulation:
-        os.mkdir(uid_path)
+        os.mkdir(uid_path, 0o777)
         copyfile(os.path.abspath('test-a.jpg'), os.path.abspath(src0))
         copyfile(os.path.abspath('test-b.jpg'), os.path.abspath(src1))
 
@@ -459,8 +472,8 @@ def save_jpeg_stream(uid, cam_id, stream):
         uid_path = cache_path+uid+'/'
         if not os.path.isdir(uid_path):
             print('create dir', uid_path)
-            os.mkdir(uid_path)
-        jpeg_path = uid_path+config['module']['cam_id_'+cam_id]+'.jpg'
+            os.mkdir(uid_path, 0o777)
+        jpeg_path = uid_path+config['module']+['cam_id_'+str(cam_id)]+'.jpg'
         print("open", jpeg_path, "...")
         with io.open(jpeg_path, 'wb') as jpeg_file:
             jpeg_file.write(stream.getvalue())
@@ -606,5 +619,7 @@ while True:
         set_camera_options(message['options'])
     elif message['action'] == 'transfert_sftp':
         transfert_sftp(message['options'])
+    elif message['action'] == 'purge_cache':
+        purge_cache()
     else:
         print("action inconnue")
