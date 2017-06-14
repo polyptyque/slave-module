@@ -548,21 +548,27 @@ if is_master or simulation:
     print("Import du module sftp")
 
 transfert_start = 0
+transfert_progress_count = 0
 
 def transfert_sftp_progress(transferred, toBeTransferred):
-    global ftp_progess_url, transfert_start
-    percent = round(100*transferred/toBeTransferred,2)
-    print("sftp progress: ", percent, "%\tTransferred: ", transferred, "\tOut of: ", toBeTransferred)
-    duration = time.time() - transfert_start
-    requests.post(ftp_progess_url, json={
-        duration: duration,
-        transferred: transferred,
-        toBeTransferred: toBeTransferred
-    })
+    global ftp_progess_url, transfert_start, transfert_progress_count
+    transfert_progress_count += 1
+    # on envoie un progress sur 10
+    if transfert_progress_count%10 == 0:
+        percent = round(100 * transferred / toBeTransferred, 2)
+        print("sftp progress: ", percent, "%\tTransferred: ", transferred, "\tOut of: ", toBeTransferred)
+        duration = time.time() - transfert_start
+        requests.post(ftp_progess_url, json={
+            duration: duration,
+            transferred: transferred,
+            toBeTransferred: toBeTransferred
+        })
+    else:
+        print('...')
 
 
 def transfert_sftp(options):
-    global config, transfert_start
+    global config, transfert_start, transfert_progress_count
     if not is_master and not simulation:
         print("ignore sftp")
         return
@@ -571,6 +577,7 @@ def transfert_sftp(options):
         return print("filepath no exists", filepath)
 
     transfert_start = time.time()
+    transfert_progress_count = 0
     print('starting sftp connection ',transfert_start)
     print(config['sftp']['host']+':'+config['sftp']['port'])
     print('filepath:'+filepath)
