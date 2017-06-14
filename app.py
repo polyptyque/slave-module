@@ -425,6 +425,19 @@ def send_images(uid):
         copyfile(os.path.abspath('test-a.jpg'), os.path.abspath(src0))
         copyfile(os.path.abspath('test-b.jpg'), os.path.abspath(src1))
 
+    if cam_count > 1:
+        # mode stereo
+        print("open stereo", src0, "and", src1)
+        files = [
+            ('a', (filename0, open(src0, 'rb'), 'image/jpg')),
+            ('b', (filename1, open(src1, 'rb'), 'image/jpg'))
+        ]
+    else:
+        # mode mono
+        print("open mono", src0)
+        files = [
+            ('a', (filename0, open(src0, 'rb'), 'image/jpg')),
+        ]
     # headers HTTP applicatif
     headers = {
         'x-run-mod': runmode,
@@ -434,32 +447,8 @@ def send_images(uid):
         'x-action': 'send_image'
     }
 
-    master_cache_path = "/home/pi/master-module/cache/"
-    # master_file0_path = master_cache_path+cam_id_0+'.jpg'
-    # master_file1_path = master_cache_path+cam_id_1+'.jpg'
-    local_uid_path = os.path.abspath(uid_path)
-
-    if simulation:
-        cp = "cp -r "+local_uid_path+" ../master-module/cache"
-        print(cp)
-        os.system(cp)
-    elif not is_master:
-        scp = "sudo -iu pi scp -r "+local_uid_path+" "+master_hostname+":"+master_cache_path
-        print(scp)
-        os.system(scp)
-    else:
-        cp = "cp -r "+local_uid_path+" "+master_cache_path
-        print(cp)
-        os.system(cp)
-
-    print("copy done.")
-    #
-    #
-    #sudo -iu pi scp /home/pi/slave-module/cache/1497315211839_04e5120e0831ddc3d16c9cf1b972db3e937c499c-0.jpg 192.168.1.75:/home/pi/master-module/cache/1497315211839_04e5120e0831ddc3d16c9cf1b972db3e937c499c/1.jpg
-
     try:
-        # requests.post(post_url, files=files, headers=headers)
-        requests.post(post_url, headers=headers)
+        requests.post(post_url, files=files, headers=headers)
         print("Upload success.")
     except:
         print('HTTP request error (image upload)')
