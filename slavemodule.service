@@ -9,3 +9,5 @@ ExecStart=/home/pi/slave-module/app.py
 Restart=always
 RestartSec=5
 
+[Install]
+WantedBy=multi-user.target
