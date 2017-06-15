@@ -337,6 +337,7 @@ if not simulation:
 if cam_preview:
     from PIL import Image
 
+    maskImg = Image.open('mask-overlay-800-480.png')
     mireImg = Image.open('mire-overlay-800-480.png')
     count0Img = Image.open('0-800-480.png')
     count1Img = Image.open('1-800-480.png')
@@ -345,34 +346,37 @@ if cam_preview:
     currentOverlay = None
 
 
-def display_overlay(img):
+def display_overlay(img, layer=3, is_current_overlay=True):
     global camera0, currentOverlay
 
     if not img:
         return
 
-    if currentOverlay:
+    if is_current_overlay and currentOverlay:
         camera0.remove_overlay(currentOverlay)
 
     # Create an image padded to the required size with
     # mode 'RGB'
     width = ((img.size[0] + 31) // 32) * 32
     height = ((img.size[1] + 15) // 16) * 16
-    print("pad size",width,height)
-    pad = Image.new('RGBA', (width,height))
+    print("pad size", width, height)
+    pad = Image.new('RGBA', (width, height))
     # Paste the original image into the padded one
     pad.paste(img, (0, 0))
     print("img size",img.size)
     # Add the overlay with the padded image as the source,
     # but the original image's dimensions
     b = pad.tobytes()
-    currentOverlay = camera0.add_overlay(b, size=img.size)
+    o = camera0.add_overlay(b, size=img.size)
     # By default, the overlay is in layer 0, beneath the
     # preview (which defaults to layer 2). Here we make
     # the new overlay semi-transparent, then move it above
     # the preview
     # o.alpha = 128
-    currentOverlay.layer = 3
+    o.layer = layer
+    # reference
+    if is_current_overlay:
+        currentOverlay = o
 
 
 def display_countdown():
@@ -418,6 +422,7 @@ def start_camera():
             print("Start camera 0 preview")
             cam_preview_started = True
             camera0.start_preview()
+            display_overlay(maskImg, 2, False)
             display_overlay(mireImg)
 
 
