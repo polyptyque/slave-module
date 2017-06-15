@@ -79,6 +79,7 @@ stream1 = None
 
 # est-ce que la prise de vue est "en cours"
 shooting = False
+last_image_src0 = False
 
 # variables par défaut
 try:
@@ -339,6 +340,8 @@ if cam_preview:
 
     maskImg = Image.open('mask-overlay-800-480.png')
     mireImg = Image.open('mire-overlay-800-480.png')
+    homeImg = Image.open('home-overlay-800-480.png')
+    flashImg = Image.open('flash-overlay-800-480.png')
     count0Img = Image.open('0-800-480.png')
     count1Img = Image.open('1-800-480.png')
     count2Img = Image.open('2-800-480.png')
@@ -377,6 +380,28 @@ def display_overlay(img, layer=3, is_current_overlay=True):
     # reference
     if is_current_overlay:
         currentOverlay = o
+
+
+def display_mire():
+    global mireImg
+    display_overlay(mireImg)
+
+
+def display_home():
+    global mireImg
+    display_overlay(homeImg)
+
+
+def display_last_image():
+    global last_image_src0
+    if last_image_src0:
+        display_overlay(Image.open(last_image_src0))
+    else:
+        print('no last_image_src0')
+
+def display_flash():
+    global flashImg
+    display_overlay(flashImg)
 
 
 def display_countdown():
@@ -423,7 +448,7 @@ def start_camera():
             cam_preview_started = True
             camera0.start_preview()
             display_overlay(maskImg, 2, False)
-            display_overlay(mireImg)
+            display_overlay(homeImg)
 
 
 # initial start
@@ -477,7 +502,7 @@ def confirm_shoot(uid, success):
 
 
 def send_images(uid):
-    global post_url, shooting
+    global post_url, shooting, last_image_src0
     # fichiers images
 
     uid_path = cache_path+'/'+uid + '/'
@@ -500,6 +525,7 @@ def send_images(uid):
     else:
         # mode mono
         print("open mono", src0)
+        last_image_src0 = src0
         files = [
             ('a', (filename0, open(src0, 'rb'), 'image/jpg')),
         ]
@@ -678,6 +704,14 @@ while True:
         takeimages(message['uid'])
     elif message['action'] == 'warning':
         display_countdown()
+    elif message['action'] == 'display_mire':
+        display_mire()
+    elif message['action'] == 'display_home':
+        display_home()
+    elif message['action'] == 'display_flash':
+        display_flash()
+    elif message['action'] == 'display_last_image':
+        display_last_image()
     elif message['action'] == 'send_images':
         send_images(message['uid'])
     elif message['action'] == 'update_master_configuration':
