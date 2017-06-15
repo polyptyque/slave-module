@@ -347,13 +347,19 @@ if cam_preview:
     count2Img = Image.open('2-800-480.png')
     count3Img = Image.open('3-800-480.png')
     currentOverlay = None
+    currentDisplayId = None
 
 
-def display_overlay(img, layer=3, is_current_overlay=True):
-    global camera0, currentOverlay
+def display_overlay(img, display_id='default', layer=3, is_current_overlay=True):
+    global camera0, currentOverlay, currentDisplayId
 
     if not img:
         return
+
+    if display_id == currentDisplayId:
+        return
+
+    currentDisplayId = display_id
 
     if is_current_overlay and currentOverlay:
         camera0.remove_overlay(currentOverlay)
@@ -366,7 +372,7 @@ def display_overlay(img, layer=3, is_current_overlay=True):
     pad = Image.new('RGBA', (width, height))
     # Paste the original image into the padded one
     pad.paste(img, (0, 0))
-    print("img size",img.size)
+    print("img size", img.size)
     # Add the overlay with the padded image as the source,
     # but the original image's dimensions
     b = pad.tobytes()
@@ -384,39 +390,40 @@ def display_overlay(img, layer=3, is_current_overlay=True):
 
 def display_mire():
     global mireImg
-    display_overlay(mireImg)
+    display_overlay(mireImg, 'mire')
 
 
 def display_home():
     global mireImg
-    display_overlay(homeImg)
+    display_overlay(homeImg, 'home')
 
 
 def display_last_image():
     global last_image_src0
     if last_image_src0:
-        display_overlay(Image.open(last_image_src0))
+        display_overlay(Image.open(last_image_src0), last_image_src0)
     else:
         print('no last_image_src0')
 
+
 def display_flash():
     global flashImg
-    display_overlay(flashImg)
+    display_overlay(flashImg, 'flash')
 
 
 def display_countdown():
     global count0Img, count1Img, count2Img, count3Img
     print('display_countdown')
-    display_overlay(count3Img)
+    display_overlay(count3Img, 'c3')
     print('3')
     time.sleep(1)
-    display_overlay(count2Img)
+    display_overlay(count2Img, 'c2')
     print('2')
     time.sleep(1)
-    display_overlay(count1Img)
+    display_overlay(count1Img, 'c1')
     print('1')
     time.sleep(1)
-    display_overlay(count0Img)
+    display_overlay(count0Img, 'c0')
     print('ready...')
 
 
@@ -447,8 +454,8 @@ def start_camera():
             print("Start camera 0 preview")
             cam_preview_started = True
             camera0.start_preview()
-            display_overlay(maskImg, 2, False)
-            display_overlay(homeImg)
+            display_overlay(maskImg, 'mask', 2, False)
+            display_overlay(homeImg, 'home')
 
 
 # initial start
@@ -494,7 +501,7 @@ def confirm_shoot(uid, success):
     except:
         print('HTTP request error (confirm_shoot)')
     finally:
-        display_overlay(mireImg)
+        display_overlay(mireImg, 'mire')
 
 #
 # SEND IMAGES
@@ -594,6 +601,9 @@ def takeimages(uid):
         # print("ok",time.clock());
         print('takeimages', a)
 
+        if cam_preview:
+            display_flash()
+
         if camera0:
             stream0 = io.BytesIO()
             camera0.capture(stream0, format='jpeg', quality=jpeg_quality, use_video_port=use_video_port)
@@ -615,7 +625,6 @@ def takeimages(uid):
         #    camera0.capture(cache_path+id + '-0.jpg', format='jpeg')
         # if camera1:
         #    camera1.capture(cache_path+id + '-1.jpg', format='jpeg')
-
         b = time.clock()
         print('image shot in ' + str(round((b - a) * 1000)) + 'ms ')
 
