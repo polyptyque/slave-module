@@ -333,6 +333,37 @@ def set_camera_options(options):
 if not simulation:
     import picamera
 
+# Preview Overlay (Mire)
+if cam_preview:
+    from PIL import Image
+
+
+def display_mire():
+    global camera0
+    # Load the arbitrarily sized image
+    img = Image.open('mire-overlay-800-480.png')
+    # Create an image padded to the required size with
+    # mode 'RGB'
+    width = ((img.size[0] + 31) // 32) * 32
+    height = ((img.size[1] + 15) // 16) * 16
+    print("pad size",width,height)
+    pad = Image.new('RGBA', (width,height))
+    # Paste the original image into the padded one
+    pad.paste(img, (0, 0))
+    print("img size",img.size)
+    # Add the overlay with the padded image as the source,
+    # but the original image's dimensions
+    #b = img.tobytes('rgba')
+    b = pad.tobytes()
+    o = camera0.add_overlay(b, size=img.size)
+    # By default, the overlay is in layer 0, beneath the
+    # preview (which defaults to layer 2). Here we make
+    # the new overlay semi-transparent, then move it above
+    # the preview
+    #o.alpha = 128
+    o.layer = 3
+
+
 
 def startcamera():
     global camera0, camera1
@@ -361,6 +392,7 @@ def startcamera():
             print("Start camera 0 preview")
             cam_preview_started = True
             camera0.start_preview()
+            display_mire()
 
 
 # initial start
