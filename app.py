@@ -341,6 +341,7 @@ if cam_preview:
     maskImg = Image.open('mask-overlay-800-480.png')
     mireImg = Image.open('mire-overlay-800-480.png')
     homeImg = Image.open('home-overlay-800-480.png')
+    doneImg = Image.open('done-overlay-800-480.png')
     flashImg = Image.open('flash-overlay-800-480.png')
     count0Img = Image.open('0-800-480.png')
     count1Img = Image.open('1-800-480.png')
@@ -404,6 +405,11 @@ def display_last_image():
         display_overlay(Image.open(last_image_src0), last_image_src0)
     else:
         print('no last_image_src0')
+
+
+def display_done():
+    global doneImg
+    display_overlay(doneImg, 'done')
 
 
 def display_flash():
@@ -501,7 +507,7 @@ def confirm_shoot(uid, success):
     except:
         print('HTTP request error (confirm_shoot)')
     finally:
-        display_overlay(mireImg, 'mire')
+        display_done()
 
 #
 # SEND IMAGES
@@ -720,6 +726,8 @@ while True:
         display_home()
     elif message['action'] == 'display_flash':
         display_flash()
+    elif message['action'] == 'display_done':
+        display_done()
     elif message['action'] == 'display_last_image':
         display_last_image()
     elif message['action'] == 'send_images':
