@@ -643,7 +643,7 @@ def transfert_sftp_progress(transferred, toBeTransferred):
     global ftp_progess_url, transfert_start, transfert_progress_count
     transfert_progress_count += 1
     # on envoie un progress sur 10
-    if transfert_progress_count%10 == 0:
+    if transfert_progress_count%5 == 1:
         percent = round(100 * transferred / toBeTransferred, 2)
         print("sftp progress: ", percent, "%\tTransferred: ", transferred, "\tOut of: ", toBeTransferred)
         duration = time.time() - transfert_start
@@ -668,6 +668,7 @@ def transfert_sftp(options):
 
     transfert_start = time.time()
     transfert_progress_count = 0
+    display_home()
     print('starting sftp connection ',transfert_start)
     print(config['sftp']['host']+':'+config['sftp']['port'])
     print('filepath:'+filepath)
